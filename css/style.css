@@ -1,7 +1,7 @@
 :root{
-    --accent-color: #c23c3c;
+    --accent-color: #494959;
     --base-color: #ffffff;
-    --text-color: #252525;;
+    --text-color: #343436;;
     --input-color: #f3ebe9;
 }
 *{
@@ -21,11 +21,11 @@ body{
     background-position: right;
     overflow: hidden;
 }
-.container{
+.wrapper{
     background-color: var(--base-color);
     height: 100vh;
     width: max(40%, 600px);
-    padding: 10px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -38,6 +38,7 @@ h1{
 }
 form{
     width: min(400px, 100%);
+    max-width: 90%;
     margin-top: 20px;
     margin-bottom: 50px;
     display: flex;
@@ -116,4 +117,18 @@ a{
 }
 a:hover{
     text-decoration: underline;
+}
+@media(max-width: 1000px){
+    .wrapper {
+        width: 100%;
+    } 
+}
+form div.incorrect label{
+    background-color: #c64343;
+}
+form div.incorrect input{
+    border-color: #c64343;
+}
+#error-message{
+    color: #c64343;
 }
