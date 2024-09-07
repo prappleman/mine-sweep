@@ -112,19 +112,18 @@ function clickTile() {
 }
 
 function revealMines() {
-    if (!bombClicked) return; // Only reveal mines if a bomb was clicked
 
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < columns; c++) {
             let tile = board[r][c];
             if (minesLocation.includes(tile.id)) {
-                if (tile.innerText === '🚩') {
-                    // Tile is flagged
-                    tile.style.backgroundColor = 'green';  // Set background to green
-                } else {
+                if (bombClicked){
                     // Tile is not flagged
                     tile.innerText = '💣';  // Show bomb icon
-                    tile.style.backgroundColor = 'red';  // Set background to red
+                    tile.style.backgroundColor = 'red';  // Set background to red   
+                } else {
+                    // Tile is flagged
+                    tile.style.backgroundColor = 'green';  // Set background to green
                 }
             }
         }
@@ -173,7 +172,6 @@ function checkMine(r, c) {
     }
 
     if (tilesClicked == rows * columns - minesCount){
-        document.getElementById('mines-count').innerText = 'Cleared';
         endGame();
     }
 }
@@ -215,6 +213,11 @@ function endGame() {
     gameOver = true;
     revealMines();  // Reveal all mines
     updateButton();  // Update button state
+    if (!bombClicked){
+        document.getElementById('mines-count').innerText = 'Cleared';
+    } else {
+        document.getElementById('mines-count').innerText = 'Failed';
+    }
     
 }
 
