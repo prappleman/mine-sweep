@@ -40,6 +40,7 @@ function startGame() {
     minesLocation = [];
     flagsUsed = 0;
     bombClicked = false;
+    minesCount = 10;
     document.getElementById('mines-count').innerText = minesCount; // Reset mine count display
     document.getElementById('board').innerHTML = "";  // Clear the previous game board
 
@@ -118,11 +119,14 @@ function revealMines() {
             let tile = board[r][c];
             if (minesLocation.includes(tile.id)) {
                 if (bombClicked){
-                    // Tile is not flagged
-                    tile.innerText = '💣';  // Show bomb icon
-                    tile.style.backgroundColor = 'red';  // Set background to red   
+                    if (tile.innerText != '🚩'){
+                        tile.innerText = '💣';  // Show bomb icon
+                        tile.style.backgroundColor = 'red';  // Set background to red 
+                    } else {
+                        tile.style.backgroundColor = 'green';  // Set background to green
+                        minesCount -= 1;
+                    }
                 } else {
-                    // Tile is flagged
                     tile.style.backgroundColor = 'green';  // Set background to green
                 }
             }
@@ -216,11 +220,11 @@ function endGame() {
     if (!bombClicked){
         document.getElementById('mines-count').innerText = 'Cleared';
     } else {
-        document.getElementById('mines-count').innerText = 'Failed';
+        document.getElementById('mines-count').innerText = minesCount;
     }
     
 }
 
 function updateFlagCounter() {
-    document.getElementById('flag-counter').innerText = `Flags Left: ${minesCount - flagsUsed}`;
+    document.getElementById('flag-counter').innerText = `Flags: ${minesCount - flagsUsed}`;
 }
