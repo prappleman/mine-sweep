@@ -2,6 +2,10 @@ var board = [];
 var rows = 10;
 var columns = 10;
 
+var timer = 0;
+var timerInterval = null;
+var firstClick = false;
+
 var minesCount = 10;
 var minesLocation = [];
 
@@ -41,6 +45,10 @@ function startGame() {
     flagsUsed = 0;
     bombClicked = false;
     minesCount = 10;
+    firstClick = false;  // Reset firstClick for a new game
+    timer = 0;  // Reset timer
+    clearInterval(timerInterval);  // Clear any previous timer interval
+    document.getElementById('timer').innerText = `0:00`;  // Reset timer display
     document.getElementById('mines-count').innerText = minesCount; // Reset mine count display
     document.getElementById('board').innerHTML = "";  // Clear the previous game board
 
@@ -77,6 +85,11 @@ function clickTile() {
         return;
     }
 
+    if (!firstClick) {
+        startTimer();
+        firstClick = true;  // Set this so the timer only starts once
+    }
+
     if (flagEnabled) {
         // Place or remove a flag
         if (tile.innerText === '') {
@@ -104,7 +117,6 @@ function clickTile() {
         } 
     }
     
-
     // Process tile click for non-mine tiles
     let coords = tile.id.split('-');
     let r = parseInt(coords[0]);
@@ -121,13 +133,14 @@ function revealMines() {
                 if (bombClicked){
                     if (tile.innerText != '🚩'){
                         tile.innerText = '💣';  // Show bomb icon
-                        tile.style.backgroundColor = 'red';  // Set background to red 
+                        tile.style.backgroundColor = 'lose-color';  // Set background to red 
                     } else {
-                        tile.style.backgroundColor = 'green';  // Set background to green
+                        tile.style.backgroundColor = 'win-color';  // Set background to green
                         minesCount -= 1;
                     }
                 } else {
-                    tile.style.backgroundColor = 'green';  // Set background to green
+                    tile.style.backgroundColor = 'win-color';  // Set background to green
+                    minesCount -= 1;
                 }
             }
         }
@@ -217,14 +230,29 @@ function endGame() {
     gameOver = true;
     revealMines();  // Reveal all mines
     updateButton();  // Update button state
-    if (!bombClicked){
-        document.getElementById('mines-count').innerText = 'Cleared';
-    } else {
-        document.getElementById('mines-count').innerText = minesCount;
-    }
-    
+
+    clearInterval(timerInterval);  // Stop the timer
+    document.getElementById('mines-count').innerText = minesCount;
 }
 
 function updateFlagCounter() {
     document.getElementById('flag-counter').innerText = `Flags: ${minesCount - flagsUsed}`;
+}
+
+function startTimer() {
+    timerInterval = setInterval(function() {
+        timer += 1;
+        
+        // Calculate minutes and seconds
+        let minutes = Math.floor(timer / 60);
+        let seconds = timer % 60;
+
+        // Format seconds to always be two digits (e.g., 01, 09, etc.)
+        if (seconds < 10) {
+            seconds = '0' + seconds;
+        }
+
+        // Update the timer display
+        document.getElementById('timer').innerText = `${minutes}:${seconds}`;
+    }, 1000);  // Update every 1 second
 }

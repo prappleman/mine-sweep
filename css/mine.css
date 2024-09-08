@@ -3,6 +3,8 @@
     --tile-color-1: lightgrey;
     --background-color: grey;
     --text-color: #333333;
+    --win-color: green;
+    --lose-color: red;
 }
 *{
     margin: 0;
