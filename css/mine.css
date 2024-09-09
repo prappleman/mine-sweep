@@ -1,10 +1,11 @@
 :root{
-    --tile-color-2: darkgrey;
-    --tile-color-1: lightgrey;
-    --background-color: grey;
+    --tile-color-1: #cccccc;
+    --tile-color-2: #909090;
+    --background-color: #505050;
     --text-color: #333333;
-    --win-color: green;
-    --lose-color: red;
+
+    --win-color: #15c115;
+    --lose-color: #ff2222;
 }
 *{
     margin: 0;
@@ -90,7 +91,12 @@ h1{
 #game-info{
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex-direction: row;
     max-width: 400px;
     width: 100%;
+}
+#timer{
+    font-size: xx-large;
+    padding: 10px;
 }

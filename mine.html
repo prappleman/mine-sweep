@@ -4,20 +4,38 @@
         <meta charset="utf-8">        
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Mine-Sweeper</title>
-        <link rel="stylesheet" href="css/mine.css">
+        <link type="text/css" rel="stylesheet" href="css/mine.css">
+        <link type="text/css" rel="stylesheet" href="css/sidebar.css">
         <script type="text/javascript" src="mine.js"></script>
     </head>
     <body class="wrapper">
-        <h1>Mine-Sweeper</h1>
-        <div id="game-info">
-            <h2 id="flag-counter">Flags: 10</h2>
-            <h2 id="timer"></h2>
-            <h2>Mines: <span id="mines-count">0</span></h2>
+
+        <!--sidebar-->
+        <div id="mySidebar" class="sidebar">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">Play</a>
+            <a href="#">Leaderboard</a>
+            <a href="#">My Games</a>
+            <a href="#">Settings</a>
+        </div>
+
+        <div class="btnContainer">
+            <button class="openbtn" onclick="openNav()">☰</button>
         </div>
         
+
+        <!--mine sweeper game-->
+        <div id="main">
+            <h1>Mine-Sweeper</h1>
+            <div id="game-info">
+                <h2 id="flag-counter">Flags: 10</h2>
+                <h2 id="timer"></h2>
+                <h2>Mines: <span id="mines-count">0</span></h2>
+            </div>
             <div id="board"></div> 
-        <br>
-        <button id="flag-button">🚩</button>
+            <br>
+            <button id="flag-button">🚩</button>
+        </div>
+        
         
     </body>
 </html>

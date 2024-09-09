@@ -48,7 +48,7 @@ function startGame() {
     firstClick = false;  // Reset firstClick for a new game
     timer = 0;  // Reset timer
     clearInterval(timerInterval);  // Clear any previous timer interval
-    document.getElementById('timer').innerText = `0:00`;  // Reset timer display
+    document.getElementById('timer').innerText = `0:00:00`;  // Reset timer display
     document.getElementById('mines-count').innerText = minesCount; // Reset mine count display
     document.getElementById('board').innerHTML = "";  // Clear the previous game board
 
@@ -133,13 +133,13 @@ function revealMines() {
                 if (bombClicked){
                     if (tile.innerText != '🚩'){
                         tile.innerText = '💣';  // Show bomb icon
-                        tile.style.backgroundColor = 'lose-color';  // Set background to red 
+                        tile.style.backgroundColor = 'var(--lose-color)';  // Set background to red 
                     } else {
-                        tile.style.backgroundColor = 'win-color';  // Set background to green
+                        tile.style.backgroundColor = 'var(--win-color)';  // Set background to green
                         minesCount -= 1;
                     }
                 } else {
-                    tile.style.backgroundColor = 'win-color';  // Set background to green
+                    tile.style.backgroundColor = 'var(--win-color)';  // Set background to green
                     minesCount -= 1;
                 }
             }
@@ -240,19 +240,39 @@ function updateFlagCounter() {
 }
 
 function startTimer() {
+    startTime = Date.now();  // Store the start time
     timerInterval = setInterval(function() {
-        timer += 1;
-        
-        // Calculate minutes and seconds
-        let minutes = Math.floor(timer / 60);
-        let seconds = timer % 60;
+        // Calculate the elapsed time
+        let elapsedTime = Date.now() - startTime;
 
-        // Format seconds to always be two digits (e.g., 01, 09, etc.)
+        // Convert elapsed time to minutes, seconds, and milliseconds
+        let minutes = Math.floor(elapsedTime / 60000); // 60000ms = 1 minute
+        let seconds = Math.floor((elapsedTime % 60000) / 1000); // Get seconds
+        let milliseconds = Math.floor((elapsedTime % 1000) / 10); // Get milliseconds (two digits)
+
+        // Format seconds and milliseconds to always be two digits
         if (seconds < 10) {
             seconds = '0' + seconds;
         }
+        if (milliseconds < 10) {
+            milliseconds = '0' + milliseconds;
+        }
 
         // Update the timer display
-        document.getElementById('timer').innerText = `${minutes}:${seconds}`;
-    }, 1000);  // Update every 1 second
+        document.getElementById('timer').innerText = `${minutes}:${seconds}:${milliseconds}`;
+    }, 10);  // Update every 10 milliseconds
+}
+
+
+
+//sidebar
+
+function openNav() {
+    document.getElementById("mySidebar").style.width = "400px";
+    document.getElementById("main").style.marginRight = "400px";
+}
+  
+function closeNav() {
+    document.getElementById("mySidebar").style.width = "0";
+    document.getElementById("main").style.marginRight= "0";
 }
