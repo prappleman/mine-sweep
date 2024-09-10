@@ -1,6 +1,3 @@
-# art-shop
+# mine-sweep
 
-    --tile-color-2: darkgrey;
-    --tile-color-1: lightgrey;
-    --background-color: grey;
-    --text-color: #333333;
+[MINE SWEEP](https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com)
