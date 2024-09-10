@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "express": "^4.19.2",
+    "node": "^22.8.0"
+  },
+  "name": "mine-sweep",
+  "description": "--tile-color-2: darkgrey;\r     --tile-color-1: lightgrey;\r     --background-color: grey;\r     --text-color: #333333;",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
