@@ -1,8 +1,9 @@
 :root{
-    --tile-color-1: #cccccc;
-    --tile-color-2: #909090;
-    --background-color: #505050;
-    --text-color: #333333;
+    --text-color: #000000;
+    --background-color: #ffffff;
+    --primary-color: #eeeeee;
+    --secondary-color: #dddddd;
+    --sidebar-color: #cccccc;
 }
 *{
     margin: 0;
@@ -17,49 +18,76 @@ body{
     min-height: 100vh;
 }
 .sidebar {
-    min-height: 98%;
-    max-height: 100%;
-    width: 0;
+    height: calc(100% - 30px);
+    width: 300;
     position: fixed;
     z-index: 1;
     top: 0;
     right: 0;
-    background-color: var(--background-color);
+    background-color: var(--sidebar-color);
     overflow-x: hidden;
     transition: 0.5s;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    font-size: xx-large;
-    margin: 10px;
+    margin: 15px;
     border-radius: 10px;
 }
 .sidebar a{
+    font-size: x-large;
+    font-weight: 900;
+    text-transform: uppercase;
     text-decoration: none;
-    color: #333333;
-    padding: 20px;
+    color: var(--text-color);
+    padding: 15px;
     margin: 10px;
     border-radius: 8px;
-    background-color: var(--tile-color-1);
+    background-color: var(--primary-color);
 }
 .sidebar a:hover{
-    background-color: var(--tile-color-2);
+    background-color: var(--secondary-color);
 }
-
 .openbtn {
     font-size: 40px;
     cursor: pointer;
-    color: #333333;
-    background-color: white;
+    color: var(--text-color);
+    background-color: var(--background-color);
     padding: 10px 15px;
     border: none;
     right: 10px;
 }
-.btnContainer{
+#btnContainer{
     margin: 0;
     position: absolute;
     top: 50px;
     right: 0px;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+}
+a.theme{
+    display: flex;
+    flex-direction: column;
+    font-weight: 700;
+    text-transform: lowercase;
+    font-size: medium;
+    padding: 6px;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 1000px) {
+    .sidebar {
+        justify-content: center;
+        align-items: center;
+        min-height: 100%;
+        width: 100vw;
+        border-radius: 0;
+        margin: 0;
+    }
+    .sidebar a{
+        width: 50vw;
+    }
+
+    /* Optional: Ensure the main content adjusts accordingly */
+    #main {
+        margin-right: 0;
+    }
 }

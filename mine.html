@@ -13,12 +13,33 @@
         <!--sidebar-->
         <div id="mySidebar" class="sidebar">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">Play</a>
-            <a href="#">Leaderboard</a>
-            <a href="#">My Games</a>
-            <a href="#">Settings</a>
+            
+            <a href="javascript:void(0)" onclick="toggleContent('leaderboardContent')">Leaderboard</a>
+            <div id="leaderboardContent" class="content" style="display: none;">
+                <p>Top players will be displayed here...</p>
+            </div>
+        
+            <a href="javascript:void(0)" onclick="toggleContent('myGamesContent')">My Games</a>
+            <div id="myGamesContent" class="content" style="display: none;">
+                <p>Your saved games will be displayed here...</p>
+            </div>
+        
+            <a href="javascript:void(0)" onclick="toggleContent('settingsContent')">Settings</a>
+            <div id="settingsContent" class="content" style="display: none;">
+                <p>Customize your theme:</p>
+                <a class="theme" onclick="setLightTheme()">Light Theme</a>
+                <a class="theme" onclick="setDarkTheme()">Dark Theme</a>
+                <p>Customize your board:</p>
+                <a class="theme" onclick="setStandardBoard()">Standard Board</a>
+                <a class="theme" onclick="setRedBoard()">red Board</a>
+                <a class="theme" onclick="setBlueBoard()">blue Board</a>
+                <a class="theme" onclick="setGreenBoard()">green Board</a>
+                <a class="theme" onclick="setPinkBoard()">pink Board</a>
+            </div>
         </div>
+        
 
-        <div class="btnContainer">
+        <div id="btnContainer">
             <button class="openbtn" onclick="openNav()">☰</button>
         </div>
         
