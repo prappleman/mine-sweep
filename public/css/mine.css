@@ -35,6 +35,7 @@ h1{
     font-size: 3rem;
     font-weight: 900;
     text-transform: uppercase;
+    padding-bottom: 30px;
 }
 #board{
     display: grid;  
@@ -98,8 +99,9 @@ h1{
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
-    max-width: 520px;
+    max-width: 500px;
     width: 100%;
+    padding: 10px;
 }
 #timer{
     font-size: xx-large;
@@ -119,7 +121,7 @@ h1{
         font-size: 30px;
     }
     #game-info{
-        max-width: 420px;
+        max-width: 400px;
 
     }
 }
@@ -129,7 +131,7 @@ h1{
         overflow: hidden;
     }
     h1{
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 900;
         text-transform: uppercase;
     }
@@ -145,7 +147,31 @@ h1{
         font-size: 25px;
     }
     #game-info{
-        max-width: 370px;
+        max-width: 350px;
+
+    }
+}
+@media (max-height: 800px){
+    h1{
+        padding-bottom: 0px;
+    }
+    #game-info{
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+    #board{
+        grid-template-columns: repeat(10, 35px);
+        grid-template-rows: repeat(10, 35px);
+        width: 350px;
+        height: 350px;
+        border-radius: 10px;
+    }
+    #board div{
+        border-radius: 4px;
+        font-size: 25px;
+    }
+    #game-info{
+        max-width: 350px;
 
     }
 }

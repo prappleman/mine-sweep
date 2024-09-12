@@ -63,7 +63,7 @@ p{
     font-size: 40px;
     cursor: pointer;
     color: var(--text-color);
-    background-color: var(--background-color);
+    background-color: #00000000;
     padding: 10px 15px;
     border: none;
     right: 10px;
@@ -147,5 +147,11 @@ input{
     /* Optional: Ensure the main content adjusts accordingly */
     #main {
         margin-right: 0;
+    }
+}
+@media (max-width: 500px){
+    #btnContainer{
+        right: -35px;
+        top: 30px;
     }
 }
