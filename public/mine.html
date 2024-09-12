@@ -16,20 +16,20 @@
             <a href="javascript:void(0)" class="closebtn play" onclick="closeNav()">Play</a>
             
             <a href="javascript:void(0)" onclick="toggleContent('leaderboardContent')">Leaderboard</a>
-            <div id="leaderboardContent" class="content" style="display: none;">
+            <div id="leaderboardContent" class="content">
                 <p>Top players will be displayed here...</p>
             </div>
         
             <a href="javascript:void(0)" onclick="toggleContent('myGamesContent')">My Games</a>
-            <div id="myGamesContent" class="content" style="display: none;">
+            <div id="myGamesContent" class="content">
                 <p>Your saved games will be displayed here...</p>
             </div>
         
             <a href="javascript:void(0)" onclick="toggleContent('settingsContent')">Settings</a>
-            <div id="settingsContent" class="content" style="display: none;">
+            <div id="settingsContent" class="content">
 
-                <p>Customize your theme:</p>
                 <form id="theme-form">
+                    <p>Customize your theme:</p>
                     <label id="light-theme-label" class="theme-label selected">
                         <input type="radio" name="theme" value="light" onclick="setLightTheme()"> Light Theme
                     </label>
@@ -38,8 +38,8 @@
                     </label>
                 </form>
 
-                <p>Customize your board:</p>
                 <form id="board-form">
+                    <p>Customize your board:</p>
                     <label id="standard-board-label" class="board-label selected">
                         <input type="radio" name="board" value="standard" onclick="setStandardBoard()"> Standard Board
                     </label>

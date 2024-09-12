@@ -4,12 +4,18 @@ function openNav() {
     const main = document.getElementById('main');
     const element = document.getElementById('btnContainer');
 
+    const buttons = document.querySelectorAll('a');
+    buttons.forEach(button => {
+            button.style.transition = 'opacity 1s';
+            button.style.opacity = '1';
+        });
+
     if (window.innerWidth <= 1000) {
         sidebar.style.width = "100vw";
         main.style.marginRight = "0";
     } else {
-        sidebar.style.width = "300px";
-        main.style.marginRight = "300px";
+        sidebar.style.width = "400px";
+        main.style.marginRight = "400px";
     }
     
     element.setAttribute('hidden', 'hidden');
@@ -21,30 +27,51 @@ window.addEventListener('resize', openNav);
   
 function closeNav() {
     document.getElementById('mySidebar').style.width = "0";
-    document.getElementById('main').style.marginRight= "0";
+    document.getElementById('main').style.marginRight = "0";
+
     const element = document.getElementById('btnContainer');
     element.removeAttribute("hidden");
+
+    const allContents = document.querySelectorAll('.content');
+    allContents.forEach(content => {
+        content.classList.remove('show');
+    });
+
+    const buttons = document.querySelectorAll('a');
+    buttons.forEach(button => {
+        button.style.transition = 'opacity 1s';
+        button.style.opacity = '0';
+    });
 }
 
 function toggleContent(contentId) {
     // Get all content sections
     const allContents = document.querySelectorAll('.content');
-    
+
     // Get the selected content section
     const content = document.getElementById(contentId);
-    
-    // If the selected section is already visible, hide it (toggle off)
-    if (content.style.display === 'block') {
-        content.style.display = 'none';
-    } else {
-        // Otherwise, hide all other sections and show the selected one
-        allContents.forEach(content => {
-            content.style.display = 'none';
-        });
 
-        content.style.display = 'block';
+    // Hide all other content sections
+    allContents.forEach(item => {
+        if (item !== content) {
+            // Set fast hide transition (0.2s)
+            item.style.transition = 'opacity 0.5s, max-height 0.5s';
+            item.classList.remove('show');
+        }
+    });
+
+    // Check if the selected content is already visible
+    if (content.classList.contains('show')) {
+        // Set fast hide transition (0.2s) and hide the content
+        content.style.transition = 'opacity 0.5s, max-height 1s';
+        content.classList.remove('show');
+    } else {
+        // Set slow show transition (1s) and show the content
+        content.style.transition = 'opacity 0.5s, max-height 1s';
+        content.classList.add('show');
     }
 }
+
 
 
 //leaderboard

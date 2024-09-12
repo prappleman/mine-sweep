@@ -20,16 +20,18 @@ body{
 p{
     font-weight: 900;
 }
+
+/*Sidebar*/
 .sidebar {
     height: calc(100% - 30px);
-    width: 300;
+    width: 400px;
     position: fixed;
     z-index: 1;
     top: 0;
     right: 0;
     background-color: var(--sidebar-color);
     overflow-x: hidden;
-    transition: 0.5s;
+    transition: 0.6s;
     display: flex;
     flex-direction: column;
     margin: 15px;
@@ -49,6 +51,14 @@ p{
 .sidebar a:hover{
     background-color: var(--secondary-color);
 }
+#mySidebar {
+    width: 400px;
+    transition: width 1s;
+}
+#main{
+    margin-right: 400px;
+    transition: margin-right 1s;
+}
 .openbtn {
     font-size: 40px;
     cursor: pointer;
@@ -66,9 +76,27 @@ p{
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
+
+/*Menu*/
+.content {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+
+/* When content is visible */
+.content.show {
+    opacity: 1;
+    max-height: 500px; /* Adjust this based on your content size */
+}
+/*Play*/
 a.play{
     font-size: xx-large;
+    padding-top: 25px;
+    padding-bottom: 25px;
 }
+
+/* Settings*/
 form{
     display: flex;
     flex-direction: column;
@@ -77,7 +105,6 @@ form{
     font-size: medium;
     padding: 6px;
 }
-/* Default state for labels */
 .theme-label, .board-label {
     padding: 5px 20px;
     
@@ -85,8 +112,6 @@ form{
     margin: 5px;
     display: inline-block;
 }
-
-/* Selected state (highlighted) */
 .selected {
     border: 2px solid black; /* No border by default */
     border-radius: 8px;
@@ -101,7 +126,6 @@ form{
     background-color: var(--tile-color-1); /* Light background color to show selection */
     border-color: var(--tile-color-2);
 }
-
 input{
     display: none;
 }
