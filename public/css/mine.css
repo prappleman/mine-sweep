@@ -6,10 +6,10 @@
     --win-color: #15c115;
     --lose-color: #ff2222;
 
-    --text-color: #000000;
+    --text-color: #333333;
     --background-color: #ffffff;
-    --primary-color: #eeeeee;
-    --secondary-color: #dddddd;
+    --primary-color: #aaaaaa;
+    --secondary-color: #bbbbbb;
 }
 *{
     margin: 0;

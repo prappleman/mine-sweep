@@ -18,6 +18,9 @@ form.addEventListener('submit', (e) => {
     if(errors.length > 0){
        e.preventDefault(); 
        error_message.innerText = errors.join(". ")
+    } else {
+       // If no errors, redirect to mine.html
+       window.location.href = '/';
     }
 })
 

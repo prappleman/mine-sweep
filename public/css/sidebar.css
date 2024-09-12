@@ -1,9 +1,9 @@
 :root{
-    --text-color: #000000;
+    --text-color: #333333;
     --background-color: #ffffff;
-    --primary-color: #eeeeee;
-    --secondary-color: #dddddd;
-    --sidebar-color: #cccccc;
+    --primary-color: #aaaaaa;
+    --secondary-color: #bbbbbb;
+    --sidebar-color: #dddddd;
 }
 *{
     margin: 0;
@@ -16,6 +16,9 @@ html{
 }
 body{
     min-height: 100vh;
+}
+p{
+    font-weight: 900;
 }
 .sidebar {
     height: calc(100% - 30px);
@@ -63,13 +66,44 @@ body{
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
-a.theme{
+a.play{
+    font-size: xx-large;
+}
+form{
     display: flex;
     flex-direction: column;
     font-weight: 700;
     text-transform: lowercase;
     font-size: medium;
     padding: 6px;
+}
+/* Default state for labels */
+.theme-label, .board-label {
+    padding: 5px 20px;
+    
+    cursor: pointer;
+    margin: 5px;
+    display: inline-block;
+}
+
+/* Selected state (highlighted) */
+.selected {
+    border: 2px solid black; /* No border by default */
+    border-radius: 8px;
+    color: black;
+}
+.theme-label.selected{
+    background-color: var(--primary-color); /* Light background color to show selection */
+    border-color: var(--text-color);
+    color: var(--text-color);
+}
+.board-label.selected{
+    background-color: var(--tile-color-1); /* Light background color to show selection */
+    border-color: var(--tile-color-2);
+}
+
+input{
+    display: none;
 }
 
 /* Media query for smaller screens */

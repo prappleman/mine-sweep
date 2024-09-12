@@ -7,12 +7,13 @@
         <link type="text/css" rel="stylesheet" href="css/mine.css">
         <link type="text/css" rel="stylesheet" href="css/sidebar.css">
         <script type="text/javascript" src="js/mine.js"></script>
+        <script type="text/javascript" src="js/sidebar.js"></script>
     </head>
     <body class="wrapper">
 
         <!--sidebar-->
         <div id="mySidebar" class="sidebar">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">Play</a>
+            <a href="javascript:void(0)" class="closebtn play" onclick="closeNav()">Play</a>
             
             <a href="javascript:void(0)" onclick="toggleContent('leaderboardContent')">Leaderboard</a>
             <div id="leaderboardContent" class="content" style="display: none;">
@@ -26,15 +27,36 @@
         
             <a href="javascript:void(0)" onclick="toggleContent('settingsContent')">Settings</a>
             <div id="settingsContent" class="content" style="display: none;">
+
                 <p>Customize your theme:</p>
-                <a class="theme" onclick="setLightTheme()">Light Theme</a>
-                <a class="theme" onclick="setDarkTheme()">Dark Theme</a>
+                <form id="theme-form">
+                    <label id="light-theme-label" class="theme-label selected">
+                        <input type="radio" name="theme" value="light" onclick="setLightTheme()"> Light Theme
+                    </label>
+                    <label id="dark-theme-label" class="theme-label">
+                        <input type="radio" name="theme" value="dark" onclick="setDarkTheme()"> Dark Theme
+                    </label>
+                </form>
+
                 <p>Customize your board:</p>
-                <a class="theme" onclick="setStandardBoard()">Standard Board</a>
-                <a class="theme" onclick="setRedBoard()">red Board</a>
-                <a class="theme" onclick="setBlueBoard()">blue Board</a>
-                <a class="theme" onclick="setGreenBoard()">green Board</a>
-                <a class="theme" onclick="setPinkBoard()">pink Board</a>
+                <form id="board-form">
+                    <label id="standard-board-label" class="board-label selected">
+                        <input type="radio" name="board" value="standard" onclick="setStandardBoard()"> Standard Board
+                    </label>
+                    <label id="red-board-label" class="board-label">
+                        <input type="radio" name="board" value="red" onclick="setRedBoard()"> Red Board
+                    </label>
+                    <label id="blue-board-label" class="board-label">
+                        <input type="radio" name="board" value="blue" onclick="setBlueBoard()"> Blue Board
+                    </label>
+                    <label id="green-board-label" class="board-label">
+                        <input type="radio" name="board" value="green" onclick="setGreenBoard()"> Green Board
+                    </label>
+                    <label id="pink-board-label" class="board-label">
+                        <input type="radio" name="board" value="pink" onclick="setPinkBoard()"> Pink Board
+                    </label>
+                </form>
+
             </div>
             <a href="login.html">login</a>
         </div>
