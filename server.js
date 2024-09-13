@@ -4,23 +4,29 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const authRouter = require('./routes/auth');
+const cors = require('cors');
+
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 // Middleware for parsing JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Middleware to log requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Add CORS support
+app.use(cors());
+
 // Authentication routes
 app.use('/auth', authRouter);
-
-// Serve mine.html
-app.get('/mine.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'mine.html'));
-});
 
 // Default route
 app.get('/', (req, res) => {
@@ -35,6 +41,12 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
   .catch(err => {
     console.error('MongoDB connection error:', err);
   });
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 // Start the server
 app.listen(port, () => {
