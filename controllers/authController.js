@@ -46,7 +46,7 @@ const login = async (req, res) => {
 
     // Generate token
     const token = generateToken(user);
-    console.log('Login successful, token:', token);
+    console.log('1 Login successful, token:', token);
     res.json({ token });
   } catch (error) {
     console.error('Error during login:', error);

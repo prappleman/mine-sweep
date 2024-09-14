@@ -72,7 +72,10 @@ function toggleContent(contentId) {
     }
 }
 
-
+function logoutButton () {
+    localStorage.removeItem('token');  // Clear the token
+    window.location.href = '/login.html';  // Redirect to login page
+};
 
 //leaderboard
 //my games
@@ -152,3 +155,30 @@ function highlightSelectedBoard(selectedLabelId) {
     boardLabels.forEach(label => label.classList.remove('selected')); // Remove 'selected' class from all
     document.getElementById(selectedLabelId).classList.add('selected'); // Add 'selected' class to the clicked label
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token');
+    console.log('Token check on page load, token:', token);  // Log token on page load
+  
+    const loggedInContent = document.getElementById('loggedInContent');
+    const loggedOutContent = document.getElementById('loggedOutContent');
+  
+    if (!loggedInContent || !loggedOutContent) {
+      console.error('Could not find content elements for logged-in or logged-out states.');
+      return;
+    }
+  
+    if (token) {
+      // User is logged in, show logged-in content
+      console.log('User is logged in, displaying logged-in content');
+      loggedInContent.style.display = 'flex';
+      loggedOutContent.style.display = 'none';
+    } else {
+      // User is not logged in, show logged-out content
+      console.log('User is not logged in, displaying logged-out content');
+      loggedInContent.style.display = 'none';
+      loggedOutContent.style.display = 'flex';
+    }
+  });
+  
