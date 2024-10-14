@@ -38,6 +38,7 @@ p{
     border-radius: 10px;
 }
 .sidebar a{
+    width: calc(100% - 50px);
     font-size: x-large;
     font-weight: 900;
     text-transform: uppercase;
@@ -53,11 +54,10 @@ p{
 }
 #mySidebar {
     width: 400px;
-    transition: width 1s;
+    transition: opacity 0.75s, width 1s;
 }
 #main{
     margin-right: 400px;
-    transition: margin-right 1s;
 }
 .openbtn {
     font-size: 40px;
@@ -75,6 +75,7 @@ p{
     right: 0px;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+    transition: opacity 0.75s;
 }
 
 /*Menu*/
@@ -82,6 +83,7 @@ p{
     opacity: 0;
     max-height: 0;
     overflow: hidden;
+    transition: opacity 1s ease, max-height 1s ease;
 }
 
 /* When content is visible */
@@ -154,11 +156,15 @@ input{
         right: -35px;
         top: 30px;
     }
+    .sidebar a{
+        width: 75vw;
+    }
 }
 
 div#loggedInContent{
     display: none;
     flex-direction: column;
+    align-items: center;
 }
 
 div#loggedOutContent{

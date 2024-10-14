@@ -1,24 +1,30 @@
 //sidebar
 function openNav() {
     const sidebar = document.getElementById('mySidebar');
-    const main = document.getElementById('main');
+    const main = document.getElementById('main')
     const element = document.getElementById('btnContainer');
 
     const buttons = document.querySelectorAll('a');
     buttons.forEach(button => {
-            button.style.transition = 'opacity 1s';
-            button.style.opacity = '1';
-        });
+        button.style.transition = 'opacity 1s';
+        button.style.opacity = '1';
+    });
 
     if (window.innerWidth <= 1000) {
+        sidebar.style.opacity = '1';
         sidebar.style.width = "100vw";
+
         main.style.marginRight = "0";
+        main.style.transition = 'margin-right 1s';
     } else {
+        sidebar.style.opacity = '1';
         sidebar.style.width = "400px";
+
         main.style.marginRight = "400px";
+        main.style.transition = 'margin-right 1s';
     }
     
-    element.setAttribute('hidden', 'hidden');
+    element.style.opacity = '0';
 }
 
 // Add event listener to handle resizing
@@ -26,11 +32,18 @@ window.addEventListener('resize', openNav);
 
   
 function closeNav() {
-    document.getElementById('mySidebar').style.width = "0";
-    document.getElementById('main').style.marginRight = "0";
+
+    const sidebar = document.getElementById('mySidebar');
+    sidebar.style.opacity = '0';
+    sidebar.style.width = '0';
+
+    const main = document.getElementById('main')
+    main.style.marginRight = '0';
+    main.style.transition = 'margin-right 1s';
+
 
     const element = document.getElementById('btnContainer');
-    element.removeAttribute("hidden");
+    element.style.opacity = '1';
 
     const allContents = document.querySelectorAll('.content');
     allContents.forEach(content => {
@@ -45,32 +58,70 @@ function closeNav() {
 }
 
 function toggleContent(contentId) {
-    // Get all content sections
+    // Get all content sections and buttons that toggle content
     const allContents = document.querySelectorAll('.content');
+    const contentButtons = document.querySelectorAll('a[onclick^="toggleContent"]');
 
     // Get the selected content section
     const content = document.getElementById(contentId);
 
-    // Hide all other content sections
-    allContents.forEach(item => {
-        if (item !== content) {
-            // Set fast hide transition (0.2s)
-            item.style.transition = 'opacity 0.5s, max-height 0.5s';
-            item.classList.remove('show');
-        }
-    });
+    // Check if window height is less than or equal to 700px
+    if (window.innerHeight <= 800) {
+        // Check if the selected content is already visible (toggle back)
+        if (content.classList.contains('show')) {
+            // Hide the content and show all content toggling buttons
+            content.classList.remove('show');
+            content.style.maxHeight = '0';
+            content.style.opacity = '0';
 
-    // Check if the selected content is already visible
-    if (content.classList.contains('show')) {
-        // Set fast hide transition (0.2s) and hide the content
-        content.style.transition = 'opacity 0.5s, max-height 1s';
-        content.classList.remove('show');
-    } else {
-        // Set slow show transition (1s) and show the content
-        content.style.transition = 'opacity 0.5s, max-height 1s';
-        content.classList.add('show');
+            // Show all content toggling buttons again
+            contentButtons.forEach(button => {
+                button.style.display = 'block';
+            });
+        } else {
+            // Hide all content sections and content toggling buttons except the clicked one
+            allContents.forEach(item => {
+                item.classList.remove('show');
+                item.style.maxHeight = '0';
+                item.style.opacity = '0';
+            });
+
+            // Hide other content toggling buttons
+            contentButtons.forEach(button => {
+                if (!button.getAttribute('onclick').includes(contentId)) {
+                    button.style.display = 'none';  // Hide other content toggling buttons
+                }
+            });
+
+            // Show the selected content
+            content.classList.add('show');
+            content.style.maxHeight = '500px';  // Adjust max height as needed
+            content.style.opacity = '1';
+        }
+    }
+    else{
+        // Hide all other content sections
+        allContents.forEach(item => {
+            if (item !== content) {
+                // Set fast hide transition (0.2s)
+                item.style.transition = 'opacity 0.5s, max-height 0.5s';
+                item.classList.remove('show');
+            }
+        });
+
+        // Check if the selected content is already visible
+        if (content.classList.contains('show')) {
+            // Set fast hide transition (0.2s) and hide the content
+            content.style.transition = 'opacity 0.5s, max-height 1s';
+            content.classList.remove('show');
+        } else {
+            // Set slow show transition (1s) and show the content
+            content.style.transition = 'opacity 0.5s, max-height 1s';
+            content.classList.add('show');
+        }
     }
 }
+    
 
 function logoutButton () {
     localStorage.removeItem('token');  // Clear the token

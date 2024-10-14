@@ -1,5 +1,5 @@
 {
-  "name": "Mine-Sweep",
+  "name": "mine-sweep",
   "version": "1.0.0",
   "description": "A simple Express server for serving static files and handling routes.",
   "main": "server.js",
