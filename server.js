@@ -22,8 +22,14 @@ app.use((req, res, next) => {
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Add CORS support
-app.use(cors());
+// CORS configuration
+const allowedOrigins = ['https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com']; // Update with your frontend URL
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods if necessary
+  credentials: true, // Allow credentials if needed (like cookies, authorization headers)
+}));
 
 // Authentication routes
 app.use('/auth', authRouter);
