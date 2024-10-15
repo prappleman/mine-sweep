@@ -15,7 +15,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-}, { timestamps: true });
+}, { 
+    timestamps: true,
+    collection: 'users'
+});
 
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
@@ -30,4 +33,4 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema, 'users');
