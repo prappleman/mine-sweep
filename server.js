@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const proxyRoutes = require('./routes/proxyRoutes');  // Import the proxy routes
+const { HttpProxyAgent } = require('http-proxy-agent'); // Correct import for proxy agent
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -30,9 +30,6 @@ app.use(cors({
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Register proxy routes
-app.use('/proxy', proxyRoutes); // Proxy routes for Fixie
-
 // Default route for the main page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'mine.html'));
@@ -42,14 +39,16 @@ app.get('/', (req, res) => {
 const connectMongoDB = async () => {
   try {
     const fixieUrl = process.env.FIXIE_URL;
-    const agent = new HttpProxyAgent(fixieUrl); // Create a new HTTP Proxy Agent
+    const agent = new HttpProxyAgent(fixieUrl); // Correct usage of the HTTP Proxy Agent
 
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      server: {
-        agent, // Pass the proxy agent to the server options
-      },
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 30000,
+      serverSelectionTimeoutMS: 5000,
+      // No direct use of agent with Mongoose. If your MongoDB connection requires a proxy,
+      // you'd need to handle that differently based on how MongoDB and Mongoose handle connections.
     });
     console.log('MongoDB connected via Fixie proxy');
   } catch (err) {
