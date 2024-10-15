@@ -2,15 +2,15 @@
 const axios = require('axios');
 const url = require('url');
 
+// Parse the FIXIE_URL to get authentication details
 const fixieUrl = url.parse(process.env.FIXIE_URL);
-const fixieAuth = fixieUrl.auth.split(':');
+const fixieAuth = fixieUrl.auth ? fixieUrl.auth.split(':') : ['', '']; // Fallback if auth is undefined
 
 // Function to make a request using Fixie
 const fetchData = async () => {
   try {
     const response = await axios.get('https://your-database-url.com', {
       proxy: {
-        protocol: 'http',
         host: fixieUrl.hostname,
         port: fixieUrl.port,
         auth: {

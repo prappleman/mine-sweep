@@ -4,8 +4,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const HttpProxyAgent = require('http-proxy-agent'); // Correct import for proxy agent
-const authRouter = require('./routes/auth'); // Authentication routes
+const proxyRoutes = require('./routes/proxyRoutes');  // Import the proxy routes
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -20,20 +19,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
-
 // CORS configuration
-const allowedOrigins = ['https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com']; // Update with your frontend URL
-
+const allowedOrigins = ['https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com'];
 app.use(cors({
   origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
 
-// Register routes
-app.use('/auth', authRouter); // Base authentication routes
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Register proxy routes
+app.use('/proxy', proxyRoutes); // Proxy routes for Fixie
 
 // Default route for the main page
 app.get('/', (req, res) => {
@@ -49,9 +47,8 @@ const connectMongoDB = async () => {
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      // Use the agent for the connection
       server: {
-        agent,
+        agent, // Pass the proxy agent to the server options
       },
     });
     console.log('MongoDB connected via Fixie proxy');
