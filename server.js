@@ -3,8 +3,9 @@ require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-const authRouter = require('./routes/auth');
 const cors = require('cors');
+const authRouter = require('./routes/auth'); // Existing auth routes
+const authRoutes = require('./routes/authRoutes');  // New routes to integrate
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -31,10 +32,11 @@ app.use(cors({
   credentials: true, // Allow credentials if needed (like cookies, authorization headers)
 }));
 
-// Authentication routes
-app.use('/auth', authRouter);
+// Register authentication routes
+app.use('/auth', authRouter);  // Base auth routes (signup, login, etc.)
+app.use('/api', authRoutes);   // Additional auth-related routes from `authRoutes.js`
 
-// Default route
+// Default route for the main page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'mine.html'));
 });
