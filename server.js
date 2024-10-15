@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { HttpProxyAgent } = require('http-proxy-agent'); // Import HttpProxyAgent for proxying
+const { HttpProxyAgent } = require('http-proxy-agent'); // Correct import for proxy agent
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -12,6 +12,12 @@ const port = process.env.PORT || 3001;
 // Middleware for parsing JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware to log requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
 // CORS configuration
 const allowedOrigins = ['https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com'];
@@ -29,19 +35,21 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'mine.html'));
 });
 
-// MongoDB connection through Fixie Proxy
+// Connect to MongoDB using Fixie proxy
 const connectMongoDB = async () => {
   try {
     const fixieUrl = process.env.FIXIE_URL;
-    const fixieAgent = new HttpProxyAgent(fixieUrl); // Create an HTTP Proxy Agent for Fixie
+    const agent = new HttpProxyAgent(fixieUrl); // Correct usage of the HTTP Proxy Agent
 
     await mongoose.connect(process.env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000, // Adjust the timeout settings as necessary
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
       socketTimeoutMS: 45000,
       connectTimeoutMS: 30000,
-      httpAgent: fixieAgent, // Ensure MongoDB uses the Fixie proxy agent for all connections
+      serverSelectionTimeoutMS: 5000,
+      // No direct use of agent with Mongoose. If your MongoDB connection requires a proxy,
+      // you'd need to handle that differently based on how MongoDB and Mongoose handle connections.
     });
-
     console.log('MongoDB connected via Fixie proxy');
   } catch (err) {
     console.error('MongoDB connection error:', err);
