@@ -4,10 +4,8 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const httpProxyAgent = require('http-proxy-agent'); // Import the proxy agent
 const authRouter = require('./routes/auth'); // Authentication routes
-const proxyRoutes = require('./routes/proxyRoutes'); // New proxy route for Fixie
-const url = require('url'); // Import url module for parsing FIXIE_URL
-const { HttpProxyAgent } = require('http-proxy-agent'); // Import HttpProxyAgent
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -30,36 +28,32 @@ const allowedOrigins = ['https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com'];
 
 app.use(cors({
   origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods if necessary
-  credentials: true, // Allow credentials if needed (like cookies, authorization headers)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
 }));
 
 // Register routes
 app.use('/auth', authRouter); // Base authentication routes
-app.use('/proxy', proxyRoutes); // Proxy route for Fixie
 
 // Default route for the main page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'mine.html'));
 });
 
-// Fixie proxy configuration
-const fixieUrl = url.parse(process.env.FIXIE_URL);
-const fixieAuth = fixieUrl.auth.split(':');
-
 // Connect to MongoDB using Fixie proxy
 const connectMongoDB = async () => {
   try {
-    const agent = new HttpProxyAgent(fixieUrl.href); // Create a new proxy agent using Fixie URL
+    const fixieUrl = process.env.FIXIE_URL;
+    const agent = new httpProxyAgent(fixieUrl); // Create a new HTTP Proxy Agent
 
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      // Set the connection agent to the proxy agent
-      agent: agent,
+      server: {
+        agent, // Use the proxy agent for the connection
+      },
     });
-
-    console.log('MongoDB connected');
+    console.log('MongoDB connected via Fixie proxy');
   } catch (err) {
     console.error('MongoDB connection error:', err);
   }
