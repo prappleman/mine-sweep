@@ -1,11 +1,13 @@
+// routes/proxyRoutes.js
 const express = require('express');
-const { fetchData } = require('../services/proxyService'); // Import from the new service file
+const { fetchData } = require('../services/proxyService');
+
 const router = express.Router();
 
 router.get('/proxy-request', async (req, res) => {
   try {
-    await fetchData();  // Call the proxy request function
-    res.status(200).send('Request successful');
+    const data = await fetchData(); // Call the proxy function
+    res.status(200).json(data); // Return the data as JSON
   } catch (error) {
     res.status(500).send('Request failed');
   }

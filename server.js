@@ -5,7 +5,8 @@ const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authRouter = require('./routes/auth'); // Authentication routes
-const proxyRoutes = require('./routes/proxyRoutes');  // New proxy route
+const proxyRoutes = require('./routes/proxyRoutes'); // New proxy route for Fixie
+const url = require('url'); // Import url module for parsing FIXIE_URL
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -33,22 +34,44 @@ app.use(cors({
 }));
 
 // Register routes
-app.use('/auth', authRouter);  // Base authentication routes
-app.use('/proxy', proxyRoutes);  // Proxy route for Fixie
+app.use('/auth', authRouter); // Base authentication routes
+app.use('/proxy', proxyRoutes); // Proxy route for Fixie
 
 // Default route for the main page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'mine.html'));
 });
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
+// Fixie proxy configuration
+const fixieUrl = url.parse(process.env.FIXIE_URL);
+const fixieAuth = fixieUrl.auth.split(':');
+
+// Connect to MongoDB using Fixie proxy
+const connectMongoDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      // Set the proxy configuration for the MongoDB connection
+      // Note: mongoose.connect does not natively support proxy settings,
+      // this is illustrative; you may need to use an additional library like `mongoose-proxy`.
+      proxy: {
+        host: fixieUrl.hostname,
+        port: fixieUrl.port,
+        auth: {
+          username: fixieAuth[0],
+          password: fixieAuth[1],
+        },
+      },
+    });
     console.log('MongoDB connected');
-  })
-  .catch(err => {
+  } catch (err) {
     console.error('MongoDB connection error:', err);
-  });
+  }
+};
+
+// Invoke the MongoDB connection function
+connectMongoDB();
 
 // Error handling middleware
 app.use((err, req, res, next) => {

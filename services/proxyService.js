@@ -1,34 +1,29 @@
-// Load environment variables in local development
-require('dotenv').config();
-
+// services/proxyService.js
 const axios = require('axios');
 const url = require('url');
 
-// Parse the Fixie proxy URL from the environment variables
 const fixieUrl = url.parse(process.env.FIXIE_URL);
 const fixieAuth = fixieUrl.auth.split(':');
 
-// Function to make a request through the proxy
-async function fetchData() {
+// Function to make a request using Fixie
+const fetchData = async () => {
   try {
-    const response = await axios.get('https://example.com', {
+    const response = await axios.get('https://your-database-url.com', {
       proxy: {
-        protocol: 'http',   // Fixie uses HTTP
-        host: fixieUrl.hostname,  // Proxy hostname
-        port: fixieUrl.port,      // Proxy port
-        auth: {                   // Proxy authentication
+        protocol: 'http',
+        host: fixieUrl.hostname,
+        port: fixieUrl.port,
+        auth: {
           username: fixieAuth[0],
           password: fixieAuth[1],
         },
       },
     });
-
-    // Log response data
-    console.log('Response status:', response.status);
-    console.log('Response data:', response.data);
-
+    return response.data; // Handle the response data as needed
   } catch (error) {
-    console.error('Error making request:', error);
+    console.error('Error fetching data through Fixie:', error);
+    throw error; // Propagate the error
   }
-}
+};
 
+module.exports = { fetchData };
