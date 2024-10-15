@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const httpProxyAgent = require('http-proxy-agent'); // Import the proxy agent
+const HttpProxyAgent = require('http-proxy-agent'); // Correct import for proxy agent
 const authRouter = require('./routes/auth'); // Authentication routes
 
 const app = express();
@@ -44,13 +44,14 @@ app.get('/', (req, res) => {
 const connectMongoDB = async () => {
   try {
     const fixieUrl = process.env.FIXIE_URL;
-    const agent = new httpProxyAgent(fixieUrl); // Create a new HTTP Proxy Agent
+    const agent = new HttpProxyAgent(fixieUrl); // Create a new HTTP Proxy Agent
 
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      // Use the agent for the connection
       server: {
-        agent, // Use the proxy agent for the connection
+        agent,
       },
     });
     console.log('MongoDB connected via Fixie proxy');
