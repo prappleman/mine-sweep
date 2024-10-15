@@ -4,8 +4,8 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const authRouter = require('./routes/auth'); // Existing auth routes
-const authRoutes = require('./routes/authRoutes');  // New routes to integrate
+const authRouter = require('./routes/auth'); // Authentication routes
+const proxyRoutes = require('./routes/proxyRoutes');  // New proxy route
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -32,9 +32,9 @@ app.use(cors({
   credentials: true, // Allow credentials if needed (like cookies, authorization headers)
 }));
 
-// Register authentication routes
-app.use('/auth', authRouter);  // Base auth routes (signup, login, etc.)
-app.use('/api', authRoutes);   // Additional auth-related routes from `authRoutes.js`
+// Register routes
+app.use('/auth', authRouter);  // Base authentication routes
+app.use('/proxy', proxyRoutes);  // Proxy route for Fixie
 
 // Default route for the main page
 app.get('/', (req, res) => {
