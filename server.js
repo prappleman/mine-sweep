@@ -39,24 +39,30 @@ app.get('/', (req, res) => {
 const connectMongoDB = async () => {
   try {
     const fixieUrl = process.env.FIXIE_URL;
-    const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://username:password@cluster0.mongodb.net/myDatabase?retryWrites=true&w=majority';
+    const mongoUri = process.env.MONGODB_URI;
 
-    // Create proxy agent
+    if (!fixieUrl || !mongoUri) {
+      throw new Error('FIXIE_URL or MONGODB_URI is missing from environment variables.');
+    }
+
+    // Set up the proxy agent
     const agent = new HttpsProxyAgent(fixieUrl);
 
-    // MongoDB connection options
+    // Set the HTTPS proxy in the environment
+    process.env.HTTPS_PROXY = fixieUrl;
+
+    // Connection options
     const connectionOptions = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       socketTimeoutMS: 45000,
       connectTimeoutMS: 30000,
       serverSelectionTimeoutMS: 5000,
-      tls: true,  // Force TLS (if necessary)
-      tlsInsecure: true, // In case Fixie requires insecure bypass
     };
 
+    // Connect to MongoDB
     await mongoose.connect(mongoUri, connectionOptions);
-    console.log('Successfully connected to MongoDB through the Fixie proxy');
+    console.log('MongoDB connected via Fixie proxy');
   } catch (err) {
     console.error('MongoDB connection error:', err);
   }
