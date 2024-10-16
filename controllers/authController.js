@@ -11,7 +11,7 @@ const [user, password] = fixieUrl.split('//')[1].split(':');
 
 // Create an Axios instance with Fixie proxy configuration
 const instance = axios.create({
-  baseURL: 'http://localhost:3001', // Replace with your target API
+  baseURL: 'https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com', // Replace with your target API
   proxy: {
     host: 'fixie',
     port: 80,
