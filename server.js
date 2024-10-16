@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { HttpProxyAgent } = require('http-proxy-agent'); // Correct import for proxy agent
+const { HttpsProxyAgent } = require('https-proxy-agent'); // Correct import for proxy agent
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -35,22 +35,28 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'mine.html'));
 });
 
-// Connect to MongoDB using Fixie proxy
+// MongoDB connection with Fixie proxy
 const connectMongoDB = async () => {
   try {
     const fixieUrl = process.env.FIXIE_URL;
-    const agent = new HttpProxyAgent(fixieUrl); // Correct usage of the HTTP Proxy Agent
+    const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://username:password@cluster0.mongodb.net/myDatabase?retryWrites=true&w=majority';
 
-    await mongoose.connect(process.env.MONGODB_URI, {
+    // Create proxy agent
+    const agent = new HttpsProxyAgent(fixieUrl);
+
+    // MongoDB connection options
+    const connectionOptions = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       socketTimeoutMS: 45000,
       connectTimeoutMS: 30000,
       serverSelectionTimeoutMS: 5000,
-      // No direct use of agent with Mongoose. If your MongoDB connection requires a proxy,
-      // you'd need to handle that differently based on how MongoDB and Mongoose handle connections.
-    });
-    console.log('MongoDB connected via Fixie proxy');
+      tls: true,  // Force TLS (if necessary)
+      tlsInsecure: true, // In case Fixie requires insecure bypass
+    };
+
+    await mongoose.connect(mongoUri, connectionOptions);
+    console.log('Successfully connected to MongoDB through the Fixie proxy');
   } catch (err) {
     console.error('MongoDB connection error:', err);
   }
