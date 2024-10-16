@@ -45,19 +45,17 @@ const connectMongoDB = async () => {
       throw new Error('FIXIE_URL or MONGODB_URI is missing from environment variables.');
     }
 
-    // Set up the proxy agent
+    // Create the proxy agent
     const agent = new HttpsProxyAgent(fixieUrl);
 
-    // Set the HTTPS proxy in the environment
-    process.env.HTTPS_PROXY = fixieUrl;
-
-    // Connection options
+    // Connection options with the Fixie proxy
     const connectionOptions = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       socketTimeoutMS: 45000,
       connectTimeoutMS: 30000,
       serverSelectionTimeoutMS: 5000,
+      httpAgent: agent // Use the Fixie proxy agent
     };
 
     // Connect to MongoDB
