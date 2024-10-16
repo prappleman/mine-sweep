@@ -22,7 +22,7 @@ const signup = async (req, res) => {
 
     // Generate token
     const token = generateToken(user);
-    res.status(201).json({ token });
+    res.status(201).json({ token, firstname }); // Include firstname in response
   } 
   catch (error) {
     console.error('Error during signup:', error);
@@ -49,7 +49,7 @@ const login = async (req, res) => {
     // Generate token
     const token = generateToken(user);
     console.log('1 Login successful, token:', token);
-    res.json({ token });
+    res.json({ token, firstname: user.firstname }); // Include firstname in response
   } 
   catch (error) {
     console.error('Error during login:', error);

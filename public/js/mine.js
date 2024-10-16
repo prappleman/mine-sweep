@@ -228,12 +228,56 @@ function onRetryClick() {
 
 function endGame() {
     gameOver = true;
-    revealMines();  // Reveal all mines
-    updateButton();  // Update button state
+    revealMines();  
+    updateButton();  
+    clearInterval(timerInterval);  
 
-    clearInterval(timerInterval);  // Stop the timer
-    document.getElementById('mines-count').innerText = minesCount;
+    // Get the end time
+    const endTime = Date.now();
+    const totalElapsedTime = endTime - startTime; 
+
+    let minutes = Math.floor(totalElapsedTime / 60000); 
+    let seconds = Math.floor((totalElapsedTime % 60000) / 1000); 
+    let milliseconds = Math.floor((totalElapsedTime % 1000) / 10); 
+
+    if (seconds < 10) {
+        seconds = '0' + seconds;
+    }
+    if (milliseconds < 10) {
+        milliseconds = '0' + milliseconds;
+    }
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userFirstName = user ? user.firstname : '';
+
+    const gameData = {
+        totalTime: `${minutes}:${seconds}:${milliseconds}`,
+        minesLeft: minesCount,
+        userFirstName: userFirstName, // Correctly accessing firstname
+    };
+
+    console.log('Sending game data to server:', gameData); // Log the data being sent
+
+    fetch('https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com/api/games', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(gameData),
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Game data saved successfully!'); // Log success
+        } else {
+            console.error('Error saving game data:', response.statusText); // Log the error message
+        }
+    })
+    .catch(error => {
+        console.error('Error during fetch:', error); // Log any fetch errors
+    });
 }
+
+
 
 function updateFlagCounter() {
     document.getElementById('flag-counter').innerText = `Flags: ${minesCount - flagsUsed}`;

@@ -6,6 +6,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/auth'); // Import the auth routes
+const gameRoutes = require('./routes/gameRoutes');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -38,6 +39,9 @@ app.get('/', (req, res) => {
 
 // Mount the auth routes
 app.use('/auth', authRoutes); // Mount the auth routes under /auth path
+
+// Use game routes
+app.use('/api', gameRoutes);
 
 // MongoDB connection
 const connectMongoDB = async () => {

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const password_input = document.getElementById('password-input');
   const repeat_password_input = document.getElementById('repeat-password-input');
   const error_message = document.getElementById('error-message');
-  
+
   // Handle login form submission
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -29,8 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const data = await response.json();
           console.log('2 Login successful, token received from server:', data.token);
 
-          // Store the token in localStorage
+          // Store the token and user information in localStorage
           localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify({ firstname: data.firstname })); // Store firstname
           console.log('Token stored in localStorage:', data.token);  // Log after saving token
 
           // Redirect to the home page
@@ -46,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-  
+
   // Handle signup form submission and validation
   if (signupForm) {
     signupForm.addEventListener('submit', async (e) => {
@@ -81,10 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             console.log('3 Signup successful, token received from server:', data.token);
 
+            // Store the token and user information in localStorage
             localStorage.setItem('token', data.token);  // Store the token
+            localStorage.setItem('user', JSON.stringify({ firstname })); // Store user info
             console.log('Token stored in localStorage:', data.token);  // Log after saving token
 
-            window.location.href = '/';  // Redirect to homepage after login
+            // Redirect to homepage after login
+            window.location.href = '/';
           } else {
             console.log('Signup failed');
             const errorData = await response.json();
@@ -108,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
-  
+
   // Signup form validation
   function getSignupFormErrors(firstname, email, password, repeatpassword) {
     let errors = [];
