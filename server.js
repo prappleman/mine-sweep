@@ -1,11 +1,11 @@
-// server.js
+// server
 require('dotenv').config(); // Load environment variables from .env file
 
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/auth'); // Import the auth routes
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -35,6 +35,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'mine.html'));
 });
+
+// Mount the auth routes
+app.use('/auth', authRoutes); // Mount the auth routes under /auth path
 
 // MongoDB connection
 const connectMongoDB = async () => {
