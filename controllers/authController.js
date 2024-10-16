@@ -1,6 +1,26 @@
 // controllers/authController.js
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+
+// Retrieve the Fixie URL from environment variables
+const fixieUrl = process.env.FIXIE_URL;
+
+// Extract username and password from the Fixie URL
+const [user, password] = fixieUrl.split('//')[1].split(':');
+
+// Create an Axios instance with Fixie proxy configuration
+const instance = axios.create({
+  baseURL: 'http://localhost:3001', // Replace with your target API
+  proxy: {
+    host: 'fixie',
+    port: 80,
+    auth: {
+      username: user,
+      password: password.split('@')[0],
+    },
+  },
+});
 
 const signup = async (req, res) => {
   try {
@@ -34,22 +54,10 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     console.log('Attempting login for user:', email);
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      console.log('User not found');
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    if (!(await user.matchPassword(password))) {
-      console.log('Invalid password');
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    // Generate token
-    const token = generateToken(user);
-    console.log('Login successful, token:', token);
-    res.json({ token });
+    
+    // Make a request using the Axios instance to your Heroku API for login
+    const response = await instance.post('/api/login', req.body); // Adjust as necessary
+    res.status(200).json(response.data); // Respond with the data from the API
   } 
   catch (error) {
     console.error('Error during login:', error);
