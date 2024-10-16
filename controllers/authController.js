@@ -1,3 +1,4 @@
+// controllers/authController.js
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
@@ -47,7 +48,7 @@ const login = async (req, res) => {
 
     // Generate token
     const token = generateToken(user);
-    console.log('1 Login successful, token:', token);
+    console.log('Login successful, token:', token);
     res.json({ token });
   } 
   catch (error) {

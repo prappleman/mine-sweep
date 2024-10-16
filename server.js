@@ -1,23 +1,20 @@
+// server.js
 require('dotenv').config(); // Load environment variables from .env file
 
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const HttpsProxyAgent = require('https-proxy-agent'); // Ensure this import is correct
+const httpProxy = require('http-proxy');
+const authRoutes = require('./routes/auth'); // Import your auth routes
 
 const app = express();
 const port = process.env.PORT || 3001;
+const proxy = httpProxy.createProxyServer({});
 
 // Middleware for parsing JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Middleware to log requests
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
 
 // CORS configuration
 const allowedOrigins = ['https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com'];
@@ -35,32 +32,14 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'mine.html'));
 });
 
-// MongoDB connection with Fixie proxy
+// MongoDB connection
 const connectMongoDB = async () => {
   try {
-    const fixieUrl = process.env.FIXIE_URL;  // Proxy URL
     const mongoUri = process.env.MONGODB_URI; // MongoDB URI
-
-    if (!fixieUrl || !mongoUri) {
-      throw new Error('FIXIE_URL or MONGODB_URI is missing from environment variables.');
-    }
-
-    // Create an HTTPS proxy agent
-    const fixieAgent = new HttpsProxyAgent(fixieUrl); // Make sure to instantiate it
-
-    // Set the HTTPS_PROXY environment variable
-    process.env.HTTPS_PROXY = fixieUrl;
-
-    // Connection options
-    const connectionOptions = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      // Note: No httpAgent option as it is not supported
-    };
-
-    // Connect to MongoDB with the proxy agent
-    await mongoose.connect(mongoUri, connectionOptions);
-    console.log('MongoDB connected via Fixie proxy');
+    if (!mongoUri) throw new Error('MONGODB_URI is missing from environment variables.');
+    
+    await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log('MongoDB connected');
   } catch (err) {
     console.error('MongoDB connection error:', err);
   }
@@ -69,10 +48,23 @@ const connectMongoDB = async () => {
 // Invoke the MongoDB connection function
 connectMongoDB();
 
+// Proxy route for API requests
+const fixieUrl = process.env.FIXIE_URL; // This should be set in Heroku's environment variables
+app.use('/api', (req, res) => {
+  // Forward the request to the Fixie proxy
+  proxy.web(req, res, { target: fixieUrl }, (error) => {
+    console.error('Proxy error:', error);
+    res.status(500).json({ message: 'Proxy error occurred' });
+  });
+});
+
+// Use the authentication routes
+app.use('/auth', authRoutes);
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).json({ message: 'Something broke!' });
 });
 
 // Start the server
