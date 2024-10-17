@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/auth'); // Import the auth routes
 const gameRoutes = require('./routes/gameRoutes');
+const connectDB = require('./config/db'); // Import the MongoDB connection function
 
 const app = express();
 const port = process.env.PORT || 3001;
