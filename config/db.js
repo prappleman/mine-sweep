@@ -1,7 +1,5 @@
-// config/db.js
 const mongoose = require('mongoose');
 const axios = require('axios');
-const tunnel = require('axios-tunnel');
 
 const connectDB = async () => {
   try {
@@ -9,17 +7,10 @@ const connectDB = async () => {
     const fixieProxy = new URL(process.env.FIXIE_URL);
 
     // Configure axios to use the Fixie Proxy for all requests
-    axios.defaults.proxy = false; // Disable axios's default proxy handling
-    axios.defaults.httpsAgent = tunnel.httpsOverHttp({
-      proxy: {
-        host: fixieProxy.hostname,
-        port: fixieProxy.port,
-        auth: {
-          username: fixieProxy.username,
-          password: fixieProxy.password,
-        },
-      },
-    });
+    axios.defaults.proxy = {
+      host: fixieProxy.hostname,
+      port: fixieProxy.port,
+    };
 
     // Connect to MongoDB using mongoose
     await mongoose.connect(process.env.MONGO_URI, {
