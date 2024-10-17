@@ -1,3 +1,4 @@
+// public/js/validation.js
 document.addEventListener('DOMContentLoaded', () => {
   // Login and Signup form element selectors
   const loginForm = document.getElementById('loginForm');

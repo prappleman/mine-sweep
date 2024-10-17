@@ -1,4 +1,4 @@
-// server
+// server.js
 require('dotenv').config(); // Load environment variables from .env file
 
 const express = require('express');
@@ -44,30 +44,7 @@ app.use('/auth', authRoutes); // Mount the auth routes under /auth path
 app.use('/api', gameRoutes);
 
 // MongoDB connection
-const connectMongoDB = async () => {
-  try {
-    const mongoUri = process.env.MONGODB_URI; // MongoDB URI
-
-    if (!mongoUri) {
-      throw new Error('MONGODB_URI is missing from environment variables.');
-    }
-
-    // Connection options
-    const connectionOptions = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    };
-
-    // Connect to MongoDB
-    await mongoose.connect(mongoUri, connectionOptions);
-    console.log('MongoDB connected');
-  } catch (err) {
-    console.error('MongoDB connection error:', err);
-  }
-};
-
-// Invoke the MongoDB connection function
-connectMongoDB();
+connectDB();
 
 // Error handling middleware
 app.use((err, req, res, next) => {
