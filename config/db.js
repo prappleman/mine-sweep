@@ -25,10 +25,10 @@ const connectDB = async () => {
 
     console.log('MongoDB connected through Fixie Proxy');
   } catch (error) {
-    console.error('Error connecting to MongoDB through Fixie Proxy:', error);
+    console.error('Error connecting to MongoDB through Fixie Proxy:', error.message);
+    console.error('Stack Trace:', error.stack);
     process.exit(1);
   }
 };
-
 
 module.exports = connectDB;

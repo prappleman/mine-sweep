@@ -26,9 +26,9 @@ const gameSchema = new mongoose.Schema({
 const Game = mongoose.model('Game', gameSchema, 'games');
 
 // Logging the export process
-console.log('GAME Exporting Game model to MongoDB...', gameSchema);
+console.log('GAME Exporting Game model to MongoDB...');
 
 // Export the model
 module.exports = Game;
 
-console.log('GAME Game model exported successfully.', gameSchema);
+console.log('GAME Game model exported successfully.');
