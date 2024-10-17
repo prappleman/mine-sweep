@@ -17,7 +17,18 @@ const gameSchema = new mongoose.Schema({
         type: String, // Store as a string in "MM/DD/YYYY" format
         required: true,
     },
+}, { 
+    timestamps: true,
+    collection: 'games'
 });
 
+// Create the model
+const Game = mongoose.model('Game', gameSchema, 'games');
+
+// Logging the export process
+console.log('GAME Exporting Game model to MongoDB...', gameSchema);
+
 // Export the model
-module.exports = mongoose.model('Game', gameSchema, 'games');
+module.exports = Game;
+
+console.log('GAME Game model exported successfully.', gameSchema);

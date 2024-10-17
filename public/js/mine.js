@@ -256,7 +256,7 @@ function endGame() {
         userFirstName: userFirstName, // Correctly accessing firstname
     };
 
-    console.log('Sending game data to server:', gameData); // Log the data being sent
+    console.log('MINE Sending game data to server:', gameData); // Log the data being sent
 
     fetch('https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com/api/games', {
         method: 'POST',
@@ -267,7 +267,7 @@ function endGame() {
     })
     .then(response => {
         if (response.ok) {
-            console.log('Game data saved successfully!'); // Log success
+            console.log('MINE Game data saved successfully!'); // Log success
         } else {
             console.error('Error saving game data:', response.statusText); // Log the error message
         }
