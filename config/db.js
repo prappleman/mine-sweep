@@ -12,6 +12,10 @@ const connectDB = async () => {
       port: fixieProxy.port,
     };
 
+    console.log('Fixie Proxy Host:', fixieProxy.hostname);
+    console.log('Fixie Proxy Port:', fixieProxy.port);
+
+
     // Check if MONGODB_URI is defined
     if (!process.env.MONGODB_URI) {
       throw new Error('MONGODB_URI is not defined in the environment variables.');

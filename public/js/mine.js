@@ -231,6 +231,7 @@ function endGame() {
     revealMines();  
     updateButton();  
     clearInterval(timerInterval);  
+    document.getElementById('mines-count').innerText = minesCount; // Reset mine count display
 
     // Get the end time
     const endTime = Date.now();

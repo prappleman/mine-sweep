@@ -3,7 +3,6 @@ require('dotenv').config(); // Load environment variables from .env file
 
 const express = require('express');
 const path = require('path');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/auth'); // Import the auth routes
 const gameRoutes = require('./routes/gameRoutes');
@@ -23,7 +22,10 @@ app.use((req, res, next) => {
 });
 
 // CORS configuration
-const allowedOrigins = ['https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com'];
+const allowedOrigins = [
+  'https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com', // Production
+  'http://localhost:3001', // Local development (adjust the port if necessary)
+];
 app.use(cors({
   origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
