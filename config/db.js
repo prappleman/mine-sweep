@@ -3,20 +3,24 @@ const axios = require('axios');
 
 const connectDB = async () => {
   try {
-    // Fixie Proxy configuration using environment variables
+    // Ensure FIXIE_URL is defined and log it for debugging
+    if (!process.env.FIXIE_URL) {
+      throw new Error('FIXIE_URL is not defined in the environment variables.');
+    }
+
     const fixieProxy = new URL(process.env.FIXIE_URL);
 
-    // Configure axios to use the Fixie Proxy for all requests
+    // Log the full proxy details for debugging (optional)
+    console.log('Fixie Proxy Host:', fixieProxy.hostname);
+    console.log('Fixie Proxy Username:', fixieProxy.username);
+    console.log('Fixie Proxy Password:', fixieProxy.password);
+
+    // Configure axios to use Fixie Proxy with hardcoded port 80
     axios.defaults.proxy = {
       host: fixieProxy.hostname,
-      port: fixieProxy.port,
+      port: 80, // Hardcoded port 80 for HTTP
     };
 
-    console.log('Fixie Proxy Host:', fixieProxy.hostname);
-    console.log('Fixie Proxy Port:', fixieProxy.port);
-
-
-    // Check if MONGODB_URI is defined
     if (!process.env.MONGODB_URI) {
       throw new Error('MONGODB_URI is not defined in the environment variables.');
     }
