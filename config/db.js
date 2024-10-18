@@ -1,34 +1,26 @@
 const mongoose = require('mongoose');
-const axios = require('axios');
+const SocksProxyAgent = require('socks-proxy-agent').SocksProxyAgent;
 
 const connectDB = async () => {
   try {
-    // Fixie Proxy configuration using environment variables
-    const fixieProxy = new URL(process.env.FIXIE_URL);
-
-    // Configure axios to use the Fixie Proxy for all requests
-    axios.defaults.proxy = {
-      host: fixieProxy.hostname,
-      port: 80,  // Ensure the correct port is set
-    };
-
-    // Check if MONGODB_URI is defined
-    if (!process.env.MONGODB_URI) {
-      throw new Error('MONGODB_URI is not defined in the environment variables.');
+    // Check if FIXIE_URL and MONGODB_URI are defined
+    if (!process.env.FIXIE_URL || !process.env.MONGODB_URI) {
+      throw new Error('FIXIE_URL or MONGODB_URI is not defined in the environment variables.');
     }
 
-    // Log MongoDB URI
-    console.log('Connecting to MongoDB with URI:', process.env.MONGODB_URI);
+    // Create a SOCKS proxy agent using the FIXIE_URL
+    const proxyAgent = new SocksProxyAgent(process.env.FIXIE_URL);
 
-    // Connect to MongoDB using mongoose
+    // Connect to MongoDB using mongoose without the agent option
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      // agent: proxyAgent // Remove this line
     });
 
-    console.log('MongoDB connected through Fixie Proxy');
+    console.log('MongoDB connected through Fixie SOCKS Proxy');
   } catch (error) {
-    console.error('Error connecting to MongoDB through Fixie Proxy:', error.message);
+    console.error('Error connecting to MongoDB through Fixie SOCKS Proxy:', error.message);
     console.error('Stack Trace:', error.stack);
     process.exit(1);
   }
