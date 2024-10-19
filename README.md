@@ -1,3 +1,3 @@
 # mine-sweep
 
-[MINE SWEEP](https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com)
+[MINE SWEEP](https://mine-sweep.onrender.com)

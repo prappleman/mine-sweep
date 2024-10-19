@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 
 // CORS configuration
 const allowedOrigins = [
-  'https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com', // Production
+  'https://mine-sweep.onrender.com', // Production
   'http://localhost:3001', // Local development (adjust the port if necessary)
 ];
 app.use(cors({

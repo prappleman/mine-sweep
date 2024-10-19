@@ -259,7 +259,7 @@ function endGame() {
 
     console.log('MINE Sending game data to server:', gameData); // Log the data being sent
 
-    fetch('https://mine-sweeper-game-ec76a0d26f8b.herokuapp.com/api/games', {
+    fetch('https://mine-sweep.onrender.com/api/games', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
