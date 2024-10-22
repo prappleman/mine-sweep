@@ -132,6 +132,58 @@ input{
     display: none;
 }
 
+/*leaderboard*/
+::-webkit-scrollbar {
+    display: none;
+}
+
+#leaderboardContent{
+    width: 100%;
+    overflow: scroll;
+}
+
+/*my games*/
+::-webkit-scrollbar {
+    display: none;
+}
+
+#myGamesContent{
+    width: 100%;
+    overflow: scroll;
+}
+
+.game-block {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 50px);
+    font-size: medium;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text-color);
+    background-color: #0000000e;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+    justify-content: space-between;
+}
+
+.game-name {
+    margin-bottom: 10px; /* Space between name and game data */
+}
+
+.game-data {
+    display: flex; /* Arrange game data in a row */
+    flex-direction: row; /* Ensure items are in a row */
+    justify-content: space-between; /* Space items evenly */
+    align-items: center; /* Align items vertically center */
+}
+
+/* Optional: styling for individual game data */
+.game-data p {
+    margin: 0; /* Remove default margin for p elements */
+    padding: 0 10px; /* Optional: horizontal padding for spacing */
+}
+
 /* Media query for smaller screens */
 @media (max-width: 1000px) {
     .sidebar {
@@ -144,6 +196,10 @@ input{
     }
     .sidebar a{
         width: 50vw;
+    }
+    .game-block{
+        width: 50vw;
+        font-size: 15px;
     }
 
     /* Optional: Ensure the main content adjusts accordingly */
@@ -159,12 +215,16 @@ input{
     .sidebar a{
         width: 75vw;
     }
+    .game-block{
+        width: 75vw;
+    }
 }
 
 div#loggedInContent{
     display: none;
     flex-direction: column;
     align-items: center;
+    overflow: scroll;
 }
 
 div#loggedOutContent{

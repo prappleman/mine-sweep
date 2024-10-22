@@ -290,9 +290,10 @@ function startTimer() {
         // Calculate the elapsed time
         let elapsedTime = Date.now() - startTime;
 
-        // Convert elapsed time to minutes, seconds, and milliseconds
-        let minutes = Math.floor(elapsedTime / 60000); // 60000ms = 1 minute
-        let seconds = Math.floor((elapsedTime % 60000) / 1000); // Get seconds
+        // Convert elapsed time to total seconds
+        let totalSeconds = Math.floor(elapsedTime / 1000); // Total seconds
+        let minutes = Math.floor(totalSeconds / 60); // Calculate minutes
+        let seconds = totalSeconds % 60; // Calculate seconds
         let milliseconds = Math.floor((elapsedTime % 1000) / 10); // Get milliseconds (two digits)
 
         // Format seconds and milliseconds to always be two digits
@@ -306,4 +307,7 @@ function startTimer() {
         // Update the timer display
         document.getElementById('timer').innerText = `${minutes}:${seconds}:${milliseconds}`;
     }, 10);  // Update every 10 milliseconds
+
+    // Optionally, if you want to provide a way to stop the timer:
+    return timerInterval; // Return the interval ID if needed for stopping the timer later
 }

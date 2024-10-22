@@ -34,4 +34,15 @@ const saveGameData = async (req, res) => {
     }
 };
 
-module.exports = { saveGameData };
+// Controller to fetch all games
+const getAllGames = async (req, res) => {
+    try {
+        const games = await Game.find({}); // Fetch all games
+        res.json(games); // Send all games as JSON
+    } catch (error) {
+        console.error('Error fetching all games:', error);
+        res.status(500).json({ message: 'Error fetching all game data' });
+    }
+};
+
+module.exports = { saveGameData, getAllGames };

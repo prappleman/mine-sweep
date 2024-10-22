@@ -231,5 +231,98 @@ document.addEventListener('DOMContentLoaded', () => {
       loggedInContent.style.display = 'none';
       loggedOutContent.style.display = 'flex';
     }
-  });
+});
   
+
+fetch('/api/games') // Fetch all games
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error fetching all games');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Fetched Game Data:', data); // Check the fetched data
+
+        // Get the containers for displaying game data
+        const myGamesContent = document.getElementById('myGamesContent');
+        const leaderboardContent = document.getElementById('leaderboardContent');
+
+        myGamesContent.innerHTML = ''; // Clear previous content for user's games
+        leaderboardContent.innerHTML = ''; // Clear previous content for leaderboard
+
+        // Retrieve user information from local storage
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userFirstName = user ? user.firstname : ''; // Get the user's first name
+
+        // Function to convert time in H:MM:SS to total seconds
+        const timeToSeconds = (time) => {
+            const parts = time.split(':');
+            const hours = parseInt(parts[0], 10) || 0; // Default to 0 if not present
+            const minutes = parseInt(parts[1], 10) || 0;
+            const seconds = parseInt(parts[2], 10) || 0;
+            return (hours * 3600) + (minutes * 60) + seconds; // Convert to total seconds
+        };
+
+        // Sort all games by least mines left, and then by least time
+        const sortedGames = data.sort((a, b) => {
+            const minesA = parseInt(a.minesLeft, 10); // Convert to number
+            const minesB = parseInt(b.minesLeft, 10); // Convert to number
+            const timeA = timeToSeconds(a.totalTime); // Convert time to seconds
+            const timeB = timeToSeconds(b.totalTime); // Convert time to seconds
+
+            // First compare minesLeft
+            if (minesA !== minesB) {
+                return minesA - minesB; // Ascending order for minesLeft
+            }
+            // If minesLeft are equal, compare totalTime
+            return timeA - timeB; // Ascending order for totalTime
+        });
+
+        console.log('Sorted Games:', sortedGames); // Check sorted games
+
+        // Filter games for the specific user
+        const userGames = sortedGames.filter(game => game.userFirstName === userFirstName);
+
+        // Display sorted games on the leaderboard
+        if (sortedGames.length) {
+            sortedGames.forEach(game => {
+                const leaderboardBlock = document.createElement('div');
+                leaderboardBlock.className = 'game-block'; // Add a class for styling
+                leaderboardBlock.innerHTML = `
+                    <div class="game-name">
+                        <p>${game.userFirstName}</p>
+                    </div>
+                    <div class="game-data">
+                        <p>${game.totalTime}</p>
+                        <p>${game.minesLeft}</p>
+                        <p>${game.date}</p>
+                    </div>
+                `;
+                leaderboardContent.appendChild(leaderboardBlock);
+            });
+        } else {
+            leaderboardContent.innerHTML = '<p>No games found for the leaderboard.</p>';
+        }
+
+        // Display only the current user's games
+        if (userGames.length) {
+            userGames.forEach(game => {
+                const gameBlock = document.createElement('div');
+                gameBlock.className = 'game-block'; // Add a class for styling
+                gameBlock.innerHTML = `
+                    <div class="game-data">
+                        <p>${game.totalTime}</p>
+                        <p>${game.minesLeft}</p>
+                        <p>${game.date}</p>
+                    </div> 
+                `;
+                myGamesContent.appendChild(gameBlock);
+            });
+        } else {
+            myGamesContent.innerHTML = `<p>No games found for user ${userFirstName}.</p>`;
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching all game data:', error);
+    });
