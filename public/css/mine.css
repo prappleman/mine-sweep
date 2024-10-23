@@ -151,4 +151,8 @@ h1{
 
     }
 }
-
+@media (max-height: 800px){
+    #main{
+        overflow: hidden;
+    }
+}
