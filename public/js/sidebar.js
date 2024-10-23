@@ -65,7 +65,7 @@ function toggleContent(contentId) {
     // Get the selected content section
     const content = document.getElementById(contentId);
 
-    // Check if window height is less than or equal to 700px
+    // Check if window height is less than or equal to 800px
     if (window.innerHeight <= 800) {
         // Check if the selected content is already visible (toggle back)
         if (content.classList.contains('show')) {
@@ -77,6 +77,14 @@ function toggleContent(contentId) {
             // Show all content toggling buttons again
             contentButtons.forEach(button => {
                 button.style.display = 'block';
+                
+                setTimeout(() => {
+                    button.style.opacity = '1';
+                    button.style.padding = '15px 15px 15px';
+                    button.style.margin = '10px 10px 10px';
+                    button.style.maxHeight = '500px';
+                    button.style.transition = 'opacity 0.5s, max-height 0.5s, padding 0.5s, margin 0.5s';
+                }, 50);
             });
         } else {
             // Hide all content sections and content toggling buttons except the clicked one
@@ -89,7 +97,15 @@ function toggleContent(contentId) {
             // Hide other content toggling buttons
             contentButtons.forEach(button => {
                 if (!button.getAttribute('onclick').includes(contentId)) {
-                    button.style.display = 'none';  // Hide other content toggling buttons
+                    button.style.maxHeight = '0px';
+                    button.style.opacity = '0';
+                    button.style.padding = '0px 0px 0px';
+                    button.style.margin = '0px 0px 0px';
+                    button.style.transition = 'max-height 0.25s, opacity 0.5s, padding 0.25s, margin 0.25s';
+
+                    setTimeout(() => {
+                        button.style.display = 'none'; // Hide other content toggling buttons
+                    }, 150);        
                 }
             });
 
@@ -97,57 +113,56 @@ function toggleContent(contentId) {
             content.classList.add('show');
             content.style.maxHeight = '500px';  // Adjust max height as needed
             content.style.opacity = '1';
+
+
         }
-    }
-    else{
+    } else {
+
         // Hide all other content sections
         allContents.forEach(item => {
             if (item !== content) {
                 // Set fast hide transition (0.2s)
-                item.style.transition = 'opacity 0.5s, max-height 0.5s';
-                item.classList.remove('show');
+                item.style.transition = 'opacity 0.35s, max-height 0.5s';
+                // Set a timeout for the duration of the transition (500ms)
+                setTimeout(() => {
+                    item.classList.remove('show');
+                }, 50); // 500ms matches the duration of the transition
             }
         });
 
         // Check if the selected content is already visible
         if (content.classList.contains('show')) {
             // Set fast hide transition (0.2s) and hide the content
-            content.style.transition = 'opacity 0.5s, max-height 1s';
+            content.style.display = 'none';
             content.classList.remove('show');
         } else {
             // Set slow show transition (1s) and show the content
-            content.style.transition = 'opacity 0.5s, max-height 1s';
+            content.style.display = 'block';
             content.classList.add('show');
         }
+        
     }
 }
-    
+
 
 function logoutButton () {
     localStorage.removeItem('token');  // Clear the token
     window.location.href = '/login.html';  // Redirect to login page
 };
 
-//leaderboard
-//my games
-//settings
 // Theme selection functions
 function setLightTheme() {
-    document.documentElement.style.setProperty('--background-color', '#ffffff');
-    document.documentElement.style.setProperty('--primary-color', '#aaaaaa');  // Light grey
-    document.documentElement.style.setProperty('--secondary-color', '#bbbbbb'); // Slightly darker grey
-    document.documentElement.style.setProperty('--sidebar-color', '#dddddd');  // Lighter grey, closer to primary
-    document.documentElement.style.setProperty('--text-color', '#333333');
+    document.documentElement.style.setProperty('--background-color', '#fff');
+    document.documentElement.style.setProperty('--primary-color', '#aaa');  // Light grey
+    document.documentElement.style.setProperty('--secondary-color', '#333'); // Slightly darker grey
 
     highlightSelectedTheme('light-theme-label');
 }
 
 function setDarkTheme() {
-    document.documentElement.style.setProperty('--background-color', '#121212');  // Dark background
-    document.documentElement.style.setProperty('--primary-color', '#333333');   // Darker grey for primary elements
-    document.documentElement.style.setProperty('--secondary-color', '#1e1e1e'); // Slightly lighter grey
-    document.documentElement.style.setProperty('--sidebar-color', '#1a1a1a');  // Very close to primary
-    document.documentElement.style.setProperty('--text-color', '#e0e0e0');    // Light grey text
+    document.documentElement.style.setProperty('--background-color', '#111');  // Dark background
+    document.documentElement.style.setProperty('--primary-color', '#222');   // Darker grey for primary elements
+    document.documentElement.style.setProperty('--secondary-color', '#fff'); // Slightly lighter grey
 
     highlightSelectedTheme('dark-theme-label');
 }
@@ -284,43 +299,74 @@ fetch('/api/games') // Fetch all games
         // Filter games for the specific user
         const userGames = sortedGames.filter(game => game.userFirstName === userFirstName);
 
-        // Display sorted games on the leaderboard
-        if (sortedGames.length) {
-            sortedGames.forEach(game => {
-                const leaderboardBlock = document.createElement('div');
-                leaderboardBlock.className = 'game-block'; // Add a class for styling
-                leaderboardBlock.innerHTML = `
-                    <div class="game-name">
-                        <p>${game.userFirstName}</p>
-                    </div>
-                    <div class="game-data">
-                        <p>${game.totalTime}</p>
-                        <p>${game.minesLeft}</p>
-                        <p>${game.date}</p>
-                    </div>
-                `;
-                leaderboardContent.appendChild(leaderboardBlock);
-            });
-        } else {
-            leaderboardContent.innerHTML = '<p>No games found for the leaderboard.</p>';
-        }
+        // Add the table with headers to myGamesContent
+        const myGamesTable = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Mines</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="myGamesBody">
+                </tbody>
+            </table>
+        `;
+        myGamesContent.innerHTML = myGamesTable; // Set the entire table with thead and tbody
 
-        // Display only the current user's games
+        // Add the table with headers to leaderboardContent
+        const leaderboardTable = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Time</th>
+                        <th>Mines</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                </tbody>
+            </table>
+        `;
+        leaderboardContent.innerHTML = leaderboardTable; // Set the entire table with thead and tbody
+
+        // Now get the <tbody> elements where rows will be appended
+        const myGamesBody = document.getElementById('myGamesBody');
+        const leaderboardBody = document.getElementById('leaderboardBody');
+
+        // Now add the dynamic rows to myGamesContent
         if (userGames.length) {
             userGames.forEach(game => {
-                const gameBlock = document.createElement('div');
-                gameBlock.className = 'game-block'; // Add a class for styling
-                gameBlock.innerHTML = `
-                    <div class="game-data">
-                        <p>${game.totalTime}</p>
-                        <p>${game.minesLeft}</p>
-                        <p>${game.date}</p>
-                    </div> 
+                const gameRow = document.createElement('tr'); // Create a table row
+                gameRow.className = 'game-row'; // Add a class for styling if needed
+                gameRow.innerHTML = `
+                    <td>${game.totalTime}</td>
+                    <td>${game.minesLeft}</td>
+                    <td>${game.date}</td>
                 `;
-                myGamesContent.appendChild(gameBlock);
+                myGamesBody.appendChild(gameRow); // Append the row to the existing tbody
             });
         } else {
-            myGamesContent.innerHTML = `<p>No games found for user ${userFirstName}.</p>`;
+            myGamesBody.innerHTML = '<tr><td colspan="3">No games found.</td></tr>';
+        }
+
+        // Similarly for leaderboardContent
+        if (sortedGames.length) {
+            sortedGames.forEach(game => {
+                const leaderboardRow = document.createElement('tr'); // Create a table row
+                leaderboardRow.className = 'game-row'; // Add a class for styling if needed
+                leaderboardRow.innerHTML = `
+                    <td>${game.userFirstName}</td>
+                    <td>${game.totalTime}</td>
+                    <td>${game.minesLeft}</td>
+                    <td>${game.date}</td>
+                `;
+                leaderboardBody.appendChild(leaderboardRow); // Append the row to the leaderboard tbody
+            });
+        } else {
+            leaderboardBody.innerHTML = '<tr><td colspan="4">No games found.</td></tr>';
         }
     })
     .catch(error => {

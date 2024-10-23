@@ -6,7 +6,6 @@
     --win-color: #15c115;
     --lose-color: #ff2222;
 
-    --text-color: #333333;
     --background-color: #ffffff;
     --primary-color: #aaaaaa;
     --secondary-color: #bbbbbb;
@@ -18,7 +17,7 @@
 html{
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12pt;
-    color: var(--text-color);
+    color: var(--secondary-color);
     text-align: center;
 }
 body{
@@ -102,6 +101,7 @@ h1{
     max-width: 500px;
     width: 100%;
     padding: 10px;
+    margin: 0 auto;
 }
 #timer{
     font-size: xx-large;
@@ -136,10 +136,10 @@ h1{
         text-transform: uppercase;
     }
     #board{
-        grid-template-columns: repeat(10, 35px);
-        grid-template-rows: repeat(10, 35px);
-        width: 350px;
-        height: 350px;
+        grid-template-columns: repeat(10, 30px);
+        grid-template-rows: repeat(10, 30px);
+        width: 300px;
+        height: 300px;
         border-radius: 10px;
     }
     #board div{
@@ -147,31 +147,8 @@ h1{
         font-size: 25px;
     }
     #game-info{
-        max-width: 350px;
+        max-width: 300px;
 
     }
 }
-@media (max-height: 800px){
-    h1{
-        padding-bottom: 0px;
-    }
-    #game-info{
-        padding-top: 0px;
-        padding-bottom: 0px;
-    }
-    #board{
-        grid-template-columns: repeat(10, 35px);
-        grid-template-rows: repeat(10, 35px);
-        width: 350px;
-        height: 350px;
-        border-radius: 10px;
-    }
-    #board div{
-        border-radius: 4px;
-        font-size: 25px;
-    }
-    #game-info{
-        max-width: 350px;
 
-    }
-}

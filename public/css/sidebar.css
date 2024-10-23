@@ -1,9 +1,7 @@
 :root{
-    --text-color: #333333;
-    --background-color: #ffffff;
-    --primary-color: #aaaaaa;
-    --secondary-color: #bbbbbb;
-    --sidebar-color: #dddddd;
+    --background-color: #fff;
+    --primary-color: #aaa;
+    --secondary-color: #333;
 }
 *{
     margin: 0;
@@ -29,13 +27,17 @@ p{
     z-index: 1;
     top: 0;
     right: 0;
-    background-color: var(--sidebar-color);
+    background-color: var(--background-color);
     overflow-x: hidden;
     transition: 0.6s;
     display: flex;
     flex-direction: column;
     margin: 15px;
     border-radius: 10px;
+    border: solid var(--primary-color);
+}
+.sidebar:hover{
+    border: solid var(--secondary-color);
 }
 .sidebar a{
     width: calc(100% - 50px);
@@ -43,14 +45,15 @@ p{
     font-weight: 900;
     text-transform: uppercase;
     text-decoration: none;
-    color: var(--text-color);
+    color: var(--secondary-color);
     padding: 15px;
     margin: 10px;
     border-radius: 8px;
+    border: solid var(--primary-color);
     background-color: var(--primary-color);
 }
 .sidebar a:hover{
-    background-color: var(--secondary-color);
+    border: solid var(--secondary-color);
 }
 #mySidebar {
     width: 400px;
@@ -58,11 +61,13 @@ p{
 }
 #main{
     margin-right: 400px;
+    width: 100vw;
+    align-items: center;
 }
 .openbtn {
     font-size: 40px;
     cursor: pointer;
-    color: var(--text-color);
+    color: var(--secondary-color);
     background-color: #00000000;
     padding: 10px 15px;
     border: none;
@@ -99,20 +104,25 @@ a.play{
 }
 
 /* Settings*/
+#settingsContent{
+    width: 100%;
+}
+
 form{
     display: flex;
     flex-direction: column;
     font-weight: 700;
     text-transform: lowercase;
     font-size: medium;
-    padding: 6px;
+    padding: 0px;
 }
 .theme-label, .board-label {
-    padding: 5px 20px;
+    padding: 10px 20px;
     
     cursor: pointer;
     margin: 5px;
     display: inline-block;
+    border: solid var(--background-color);
 }
 .selected {
     border: 2px solid black; /* No border by default */
@@ -121,8 +131,8 @@ form{
 }
 .theme-label.selected{
     background-color: var(--primary-color); /* Light background color to show selection */
-    border-color: var(--text-color);
-    color: var(--text-color);
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
 }
 .board-label.selected{
     background-color: var(--tile-color-1); /* Light background color to show selection */
@@ -138,8 +148,8 @@ input{
 }
 
 #leaderboardContent{
-    width: 100%;
     overflow: scroll;
+    width: calc(100% - 30px);
 }
 
 /*my games*/
@@ -148,35 +158,21 @@ input{
 }
 
 #myGamesContent{
-    width: 100%;
     overflow: scroll;
+    width: calc(100% - 30px);
 }
 
-.game-block {
-    display: flex;
-    flex-direction: column;
-    width: calc(100% - 50px);
-    font-size: medium;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--text-color);
-    background-color: #0000000e;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 8px;
-    justify-content: space-between;
+table {
+    border-collapse: collapse;
+    min-width: 100%;
 }
-
-.game-name {
-    margin-bottom: 10px; /* Space between name and game data */
+  
+td, th {
+    border: 2px solid var(--primary-color);
+    padding: 8px;
 }
-
-.game-data {
-    display: flex; /* Arrange game data in a row */
-    flex-direction: row; /* Ensure items are in a row */
-    justify-content: space-between; /* Space items evenly */
-    align-items: center; /* Align items vertically center */
-}
+  
+tr:nth-child(even){background-color: #80808040;}
 
 /* Optional: styling for individual game data */
 .game-data p {
@@ -197,7 +193,7 @@ input{
     .sidebar a{
         width: 50vw;
     }
-    .game-block{
+    .game-Row{
         width: 50vw;
         font-size: 15px;
     }
@@ -215,7 +211,7 @@ input{
     .sidebar a{
         width: 75vw;
     }
-    .game-block{
+    .game-Row{
         width: 75vw;
     }
 }
