@@ -1,4 +1,5 @@
 :root{
+    touch-action: pan-x pan-y;
     --accent-color: #494959;
     --base-color: #ffffff;
     --text-color: #343436;;
