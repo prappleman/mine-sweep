@@ -188,6 +188,16 @@ tr:nth-child(even){background-color: #80808040;}
 
 /* Media query for smaller screens */
 @media (max-width: 1000px) {
+    #mySidebar{
+        opacity: 0;
+        width: 0;
+    }
+    #btnContainer{
+        opacity: 1;
+    }
+    #main {
+        margin-right: 0;
+    }
     .sidebar {
         justify-content: center;
         align-items: center;
@@ -206,11 +216,6 @@ tr:nth-child(even){background-color: #80808040;}
     .game-Row{
         width: 50vw;
         font-size: 15px;
-    }
-
-    /* Optional: Ensure the main content adjusts accordingly */
-    #main {
-        margin-right: 0;
     }
 }
 @media (max-width: 500px){

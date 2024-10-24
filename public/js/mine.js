@@ -250,7 +250,7 @@ function endGame() {
     }
 
     const user = JSON.parse(localStorage.getItem('user'));
-    const userFirstName = user ? user.FirstName : '';
+    const userFirstName = user ? user.firstname : '';
 
     const gameData = {
         totalTime: `${minutes}:${seconds}:${milliseconds}`,
