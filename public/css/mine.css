@@ -1,4 +1,5 @@
 :root{
+    touch-action: pan-x pan-y;
     --tile-color-1: #cccccc;
     --tile-color-2: #909090;
     --base-color: #505050;
