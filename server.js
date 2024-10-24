@@ -1,11 +1,12 @@
-// server.js
 require('dotenv').config(); // Load environment variables from .env file
 
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const authRoutes = require('./routes/auth'); // Import the auth routes
+const authRoutes = require('./routes/authRoutes'); // Import the auth routes
 const gameRoutes = require('./routes/gameRoutes');
+const themeRoutes = require('./routes/themeRoutes');
+const authenticateToken = require('./middleware/auth'); // Import the auth middleware
 const connectDB = require('./config/db'); // Import the MongoDB connection function
 
 const app = express();
@@ -43,8 +44,11 @@ app.get('/', (req, res) => {
 // Mount the auth routes
 app.use('/auth', authRoutes); // Mount the auth routes under /auth path
 
-// Use game routes
-app.use('/api', gameRoutes);
+// Use theme routes with authentication middleware
+app.use('/theme', themeRoutes); 
+
+// Use game routes with authentication middleware
+app.use('/game', gameRoutes);
 
 // MongoDB connection
 connectDB();

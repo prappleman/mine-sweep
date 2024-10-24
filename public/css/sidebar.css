@@ -118,11 +118,11 @@ form{
 }
 .theme-label, .board-label {
     padding: 10px 20px;
-    
     cursor: pointer;
     margin: 5px;
     display: inline-block;
-    border: solid var(--background-color);
+    border: solid #80808040;
+    border-radius: 8px;
 }
 .selected {
     border: 2px solid black; /* No border by default */
@@ -135,8 +135,8 @@ form{
     color: var(--secondary-color);
 }
 .board-label.selected{
-    background-color: var(--tile-color-1); /* Light background color to show selection */
-    border-color: var(--tile-color-2);
+    background-color: var(--tile-color-2); /* Light background color to show selection */
+    border-color: var(--base-color);
 }
 input{
     display: none;
@@ -166,8 +166,14 @@ table {
     border-collapse: collapse;
     min-width: 100%;
 }
+
+th {
+    background-color: var(--tile-color-2);
+    border: 2px solid var(--base-color);
+    padding: 8px;
+}
   
-td, th {
+td {
     border: 2px solid var(--primary-color);
     padding: 8px;
 }
@@ -189,6 +195,10 @@ tr:nth-child(even){background-color: #80808040;}
         width: 100vw;
         border-radius: 0;
         margin: 0;
+        border: none;
+    }
+    .sidebar:hover{
+        border: none;
     }
     .sidebar a{
         width: 50vw;

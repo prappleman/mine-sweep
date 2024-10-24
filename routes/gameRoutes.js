@@ -1,6 +1,7 @@
 const express = require('express');
-const router = express.Router();
 const { saveGameData, getAllGames } = require('../controllers/gameController');
+const authenticateToken = require('../middleware/auth');
+const router = express.Router();
 
 // POST route for saving game data
 router.post('/games', (req, res, next) => {

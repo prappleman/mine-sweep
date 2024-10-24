@@ -1,4 +1,4 @@
-//sidebar
+//public/js/sidebar.js
 function openNav() {
     const sidebar = document.getElementById('mySidebar');
     const main = document.getElementById('main')
@@ -147,83 +147,15 @@ function toggleContent(contentId) {
 
 function logoutButton () {
     localStorage.removeItem('token');  // Clear the token
+    localStorage.removeItem('user');
+    localStorage.removeItem('themeData');
     window.location.href = '/login.html';  // Redirect to login page
 };
 
-// Theme selection functions
-function setLightTheme() {
-    document.documentElement.style.setProperty('--background-color', '#fff');
-    document.documentElement.style.setProperty('--primary-color', '#aaa');  // Light grey
-    document.documentElement.style.setProperty('--secondary-color', '#333'); // Slightly darker grey
-
-    highlightSelectedTheme('light-theme-label');
-}
-
-function setDarkTheme() {
-    document.documentElement.style.setProperty('--background-color', '#111');  // Dark background
-    document.documentElement.style.setProperty('--primary-color', '#222');   // Darker grey for primary elements
-    document.documentElement.style.setProperty('--secondary-color', '#fff'); // Slightly lighter grey
-
-    highlightSelectedTheme('dark-theme-label');
-}
-
-// Board selection functions
-function setStandardBoard() {
-    document.documentElement.style.setProperty('--tile-color-1', '#cccccc');
-    document.documentElement.style.setProperty('--tile-color-2', '#909090');
-    document.documentElement.style.setProperty('--base-color', '#505050');
-
-    highlightSelectedBoard('standard-board-label');
-}
-
-function setRedBoard() {
-    document.documentElement.style.setProperty('--tile-color-1', '#ff9999');
-    document.documentElement.style.setProperty('--tile-color-2', '#cc6666');
-    document.documentElement.style.setProperty('--base-color', '#990000');
-
-    highlightSelectedBoard('red-board-label');
-}
-
-function setBlueBoard() {
-    document.documentElement.style.setProperty('--tile-color-1', '#99ccff');
-    document.documentElement.style.setProperty('--tile-color-2', '#6699ff');
-    document.documentElement.style.setProperty('--base-color', '#0033cc');
-
-    highlightSelectedBoard('blue-board-label');
-}
-
-function setGreenBoard() {
-    document.documentElement.style.setProperty('--tile-color-1', '#99ff99');
-    document.documentElement.style.setProperty('--tile-color-2', '#66cc66');
-    document.documentElement.style.setProperty('--base-color', '#009900');
-
-    highlightSelectedBoard('green-board-label');
-}
-
-function setPinkBoard() {
-    document.documentElement.style.setProperty('--tile-color-1', '#ffccff');
-    document.documentElement.style.setProperty('--tile-color-2', '#ff99cc');
-    document.documentElement.style.setProperty('--base-color', '#cc0099');
-
-    highlightSelectedBoard('pink-board-label');
-}
-
-// Function to highlight the selected theme
-function highlightSelectedTheme(selectedLabelId) {
-    const themeLabels = document.querySelectorAll('#theme-form .theme-label');
-    themeLabels.forEach(label => label.classList.remove('selected')); // Remove 'selected' class from all
-    document.getElementById(selectedLabelId).classList.add('selected'); // Add 'selected' class to the clicked label
-}
-
-// Function to highlight the selected board
-function highlightSelectedBoard(selectedLabelId) {
-    const boardLabels = document.querySelectorAll('#board-form .board-label');
-    boardLabels.forEach(label => label.classList.remove('selected')); // Remove 'selected' class from all
-    document.getElementById(selectedLabelId).classList.add('selected'); // Add 'selected' class to the clicked label
-}
-
 
 document.addEventListener('DOMContentLoaded', () => {
+    applyStoredTheme();
+
     const token = localStorage.getItem('token');
     console.log('Token check on page load, token:', token);  // Log token on page load
   
@@ -249,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
   
 
-fetch('/api/games') // Fetch all games
+fetch('/game/games') // Fetch all games
     .then(response => {
         if (!response.ok) {
             throw new Error('Error fetching all games');
@@ -372,3 +304,176 @@ fetch('/api/games') // Fetch all games
     .catch(error => {
         console.error('Error fetching all game data:', error);
     });
+    
+// Theme selection functions
+function setLightTheme() {
+    document.documentElement.style.setProperty('--background-color', '#fff');
+    document.documentElement.style.setProperty('--primary-color', '#aaa');  // Light grey
+    document.documentElement.style.setProperty('--secondary-color', '#333'); // Slightly darker grey
+
+    highlightSelectedTheme('light-theme-label');
+    saveThemeToDatabase('light', null); // Save light theme
+}
+
+function setDarkTheme() {
+    document.documentElement.style.setProperty('--background-color', '#111');  // Dark background
+    document.documentElement.style.setProperty('--primary-color', '#222');   // Darker grey for primary elements
+    document.documentElement.style.setProperty('--secondary-color', '#fff'); // Slightly lighter grey
+
+    highlightSelectedTheme('dark-theme-label');
+    saveThemeToDatabase('dark', null); // Save dark theme
+}
+
+// Board selection functions
+function setStandardBoard() {
+    document.documentElement.style.setProperty('--tile-color-1', '#cccccc');
+    document.documentElement.style.setProperty('--tile-color-2', '#909090');
+    document.documentElement.style.setProperty('--base-color', '#505050');
+
+    highlightSelectedBoard('standard-board-label');
+    saveThemeToDatabase(null, 'standard'); // Save standard board
+}
+
+function setPurpleBoard() {
+    document.documentElement.style.setProperty('--tile-color-1', '#E8D5FF');
+    document.documentElement.style.setProperty('--tile-color-2', '#B38CFF');
+    document.documentElement.style.setProperty('--base-color', '#6038A3');
+
+    highlightSelectedBoard('purple-board-label');
+    saveThemeToDatabase(null, 'purple'); // Save purple board
+}
+
+function setBlueBoard() {
+    document.documentElement.style.setProperty('--tile-color-1', '#D0E7FF');
+    document.documentElement.style.setProperty('--tile-color-2', '#80BFFF');
+    document.documentElement.style.setProperty('--base-color', '#1A5F9F');
+
+    highlightSelectedBoard('blue-board-label');
+    saveThemeToDatabase(null, 'blue'); // Save blue board
+}
+
+function setOrangeBoard() {
+    document.documentElement.style.setProperty('--tile-color-1', '#FFE8CC');
+    document.documentElement.style.setProperty('--tile-color-2', '#FFB366');
+    document.documentElement.style.setProperty('--base-color', '#B35900');
+
+    highlightSelectedBoard('orange-board-label');
+    saveThemeToDatabase(null, 'orange'); // Save orange board
+}
+
+function setPinkBoard() {
+    document.documentElement.style.setProperty('--tile-color-1', '#ffccff');
+    document.documentElement.style.setProperty('--tile-color-2', '#ff99cc');
+    document.documentElement.style.setProperty('--base-color', '#cc0099');
+
+    highlightSelectedBoard('pink-board-label');
+    saveThemeToDatabase(null, 'pink'); // Save pink board
+}
+
+// Function to highlight the selected theme
+function highlightSelectedTheme(selectedLabelId) {
+    const themeLabels = document.querySelectorAll('#theme-form .theme-label');
+    themeLabels.forEach(label => label.classList.remove('selected')); // Remove 'selected' class from all
+    document.getElementById(selectedLabelId).classList.add('selected'); // Add 'selected' class to the clicked label
+}
+
+// Function to highlight the selected board
+function highlightSelectedBoard(selectedLabelId) {
+    const boardLabels = document.querySelectorAll('#board-form .board-label');
+    boardLabels.forEach(label => label.classList.remove('selected')); // Remove 'selected' class from all
+    document.getElementById(selectedLabelId).classList.add('selected'); // Add 'selected' class to the clicked label
+}
+
+async function saveThemeToDatabase(theme, board) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userFirstName = user ? user.firstname : '';  // Ensure proper key usage
+
+    // Only proceed if at least one of theme or board is provided
+    if (!theme && !board) {
+        console.error('At least theme or board must be provided');
+        return; // Do not proceed with the request
+    }
+
+    try {
+        const token = localStorage.getItem('token');
+        console.log('Token:', token, user, userFirstName); // Check the token
+
+        // Prepare the data to be sent (only include fields that are provided)
+        const themeData = { userFirstName };
+        if (theme) themeData.theme = theme;
+        if (board) themeData.board = board;
+
+        const response = await fetch('/theme/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // Include the token in the request header
+            },
+            body: JSON.stringify(themeData), // Send the valid data
+        });
+
+        if (response.ok) {
+            console.log('Theme and board settings saved successfully!');
+
+            // Update localStorage with the new theme and board settings
+            const savedThemeData = { ...themeData };
+
+            // If theme or board wasn't provided, keep the current value from localStorage
+            const currentTheme = JSON.parse(localStorage.getItem('themeData')) || {};
+            if (!theme) savedThemeData.theme = currentTheme.theme; // Preserve existing theme if not updated
+            if (!board) savedThemeData.board = currentTheme.board; // Preserve existing board if not updated
+
+            localStorage.setItem('themeData', JSON.stringify(savedThemeData)); // Save updated themeData to localStorage
+
+            console.log('Updated localStorage with new theme and board settings:', savedThemeData);
+        } else {
+            const errorData = await response.json();
+            console.error('Failed to save theme:', errorData, themeData); // Log the entire error response
+        }
+    } catch (error) {
+        console.error('Error saving theme to database:', error);
+    }
+}
+
+
+function applyTheme(themeData) {
+    // Apply theme settings based on fetched data
+    if (themeData.theme === 'light') {
+      setLightTheme();
+    } else if (themeData.theme === 'dark') {
+      setDarkTheme();
+    }
+  
+    // Apply the board theme
+    switch (themeData.board) {
+        case 'standard':
+            setStandardBoard();
+            break;
+        case 'purple':
+            setPurpleBoard();
+            break;
+        case 'blue':
+            setBlueBoard();
+            break;
+        case 'orange':
+            setOrangeBoard();
+            break;
+        case 'pink':
+            setPinkBoard();
+            break;
+        default:
+            console.log('Unknown board theme:', themeData.board);
+    }
+}
+  
+function applyStoredTheme() {
+    const themeData = JSON.parse(localStorage.getItem('themeData'));
+    if (themeData) {
+      console.log('Applying stored theme:', themeData);
+      applyTheme(themeData);
+    } else {
+      console.log('No stored theme found');
+    }
+}
+  
+  

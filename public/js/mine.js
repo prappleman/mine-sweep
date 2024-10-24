@@ -69,10 +69,12 @@ function startGame() {
 function setFlag() {
     if (flagEnabled) {
         flagEnabled = false;
-        document.getElementById('flag-button').style.border = 'none';
+        document.getElementById('flag-button').style.border = 'solid var(--base-color)';
+        document.getElementById('flag-button').style.backgroundColor = 'var(--tile-color-2)';
     } else {
         flagEnabled = true;
-        document.getElementById('flag-button').style.border = 'solid var(--text-color)';
+        document.getElementById('flag-button').style.border = 'solid var(--secondary-color)';
+        document.getElementById('flag-button').style.backgroundColor = 'var(--primary-color)';
     }
     console.log('Flag state: ', flagEnabled);
 }
@@ -210,7 +212,6 @@ function updateButton() {
         document.getElementById('flag-button').onclick = onRetryClick;  // Set retry functionality
     }else {
         document.getElementById('flag-button').textContent = '🚩';  // Change text back to '🚩'
-        document.getElementById('flag-button').style.border = flagEnabled ? 'solid var(--text-color)' : 'none';  // Style for flag toggle
         document.getElementById('flag-button').onclick = setFlag;  // Set flag functionality
     }
 }
@@ -249,20 +250,21 @@ function endGame() {
     }
 
     const user = JSON.parse(localStorage.getItem('user'));
-    const userFirstName = user ? user.firstname : '';
+    const userFirstName = user ? user.FirstName : '';
 
     const gameData = {
         totalTime: `${minutes}:${seconds}:${milliseconds}`,
         minesLeft: minesCount,
-        userFirstName: userFirstName, // Correctly accessing firstname
+        userFirstName: userFirstName, // Correctly accessing userFirstName
     };
 
-    console.log('MINE Sending game data to server:', gameData); // Log the data being sent
+    console.log('MINE Sending game data to server:', gameData ); // Log the data being sent
 
-    fetch('https://mine-sweep.onrender.com/api/games', {
+    fetch('https://mine-sweep.onrender.com/game/games', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify(gameData),
     })

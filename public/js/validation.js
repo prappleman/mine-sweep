@@ -1,5 +1,50 @@
 // public/js/validation.js
 document.addEventListener('DOMContentLoaded', () => {
+ // Fetch theme data for the logged-in user
+ async function fetchThemeData() {
+  try {
+      // Retrieve user information from local storage
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userFirstName = user ? user.firstname : ''; // Get the user's first name
+
+      if (!userFirstName) {
+          console.error('User first name is missing');
+          return;
+      }
+
+      // Fetch user-specific theme preferences using a query parameter
+      const response = await fetch(`/theme/get?userFirstName=${encodeURIComponent(userFirstName)}`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}` // Assuming auth token
+          },
+      });
+
+      // Log response status and details for debugging
+      console.log('Response status:', response.status);
+      console.log('Response details:', response);
+
+      if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(`Failed to fetch theme preferences. Status: ${response.status}, Message: ${errorMessage}`);
+      }
+
+      const { data: userTheme } = await response.json(); // Assuming server responds with { data: theme }
+
+      if (userTheme) {
+          localStorage.setItem('themeData', JSON.stringify(userTheme));
+      } else {
+          console.log('No theme preferences found for user');
+      }
+  } catch (error) {
+      console.error('Error fetching theme:', error);
+  }
+}
+
+
+
+
   // Login and Signup form element selectors
   const loginForm = document.getElementById('loginForm');
   const signupForm = document.getElementById('signupForm');
@@ -34,6 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify({ firstname: data.firstname })); // Store firstname
           console.log('Token stored in localStorage:', data.token);  // Log after saving token
+
+          // Fetch and apply the theme
+          await fetchThemeData();
 
           // Redirect to the home page
           window.location.href = '/';
@@ -87,6 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('token', data.token);  // Store the token
             localStorage.setItem('user', JSON.stringify({ firstname })); // Store user info
             console.log('Token stored in localStorage:', data.token);  // Log after saving token
+
+            // Fetch and apply the theme
+            await fetchThemeData();
 
             // Redirect to homepage after login
             window.location.href = '/';
