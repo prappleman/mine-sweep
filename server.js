@@ -3,9 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const authRoutes = require('./routes/authRoutes');
 const gameRoutes = require('./routes/gameRoutes');
-const themeRoutes = require('./routes/themeRoutes');
 const connectDB = require('./config/db');
 
 const app = express();
@@ -21,6 +19,7 @@ app.use((req, res, next) => {
 
 const allowedOrigins = [
   'https://mine-sweep.onrender.com',
+  'https://mine-sweep-three.vercel.app',
   'http://localhost:3001',
   'http://localhost:3000',
 ];
@@ -67,13 +66,11 @@ const withDB = async (req, res, next) => {
   }
 };
 
-app.use('/auth', withDB, authRoutes);
-app.use('/theme', withDB, themeRoutes);
 app.use('/game', withDB, gameRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).json({ message: 'Something broke!' });
 });
 
 if (require.main === module) {

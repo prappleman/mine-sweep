@@ -1,85 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">        
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Mine-Sweeper</title>
-        <link type="text/css" rel="stylesheet" href="css/mine.css">
-        <link type="text/css" rel="stylesheet" href="css/sidebar.css">
-        <script type="text/javascript" src="js/mine.js"></script>
-        <script type="text/javascript" src="js/sidebar.js"></script>
-        <script type="text/javascript" src="js/validation.js"></script>
-    </head>
-    <body class="wrapper">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Mine Sweep</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/mine.css">
+</head>
+<body>
+    <div class="bg-grid" aria-hidden="true"></div>
 
-        <!--sidebar-->
-        <div id="mySidebar" class="sidebar">
-            <a href="javascript:void(0)" class="closebtn play" onclick="closeNav()">Play</a>
-            <div id="loggedInContent">
-                <a href="javascript:void(0)" onclick="toggleContent('leaderboardContent')">Leaderboard</a>
-                <div id="leaderboardContent" class="content"></div>
-            
-                <a href="javascript:void(0)" onclick="toggleContent('myGamesContent')">My Games</a>
-                <div id="myGamesContent" class="content"></div>
-            
-                <a href="javascript:void(0)" onclick="toggleContent('settingsContent')">Settings</a>
-                <div id="settingsContent" class="content">
+    <header class="topbar">
+        <h1 class="logo">MINE<span>SWEEP</span></h1>
+        <button type="button" class="pilot" id="pilot-btn" title="Change initials">
+            <span>PLAYER</span>
+            <strong id="pilot-name">---</strong>
+        </button>
+    </header>
 
-                    <form id="theme-form">
-                        <p>Customize your theme:</p>
-                        <label id="light-theme-label" class="theme-label selected">
-                            <input type="radio" name="theme" value="light" onclick="setLightTheme()"> Light Theme
-                        </label>
-                        <label id="dark-theme-label" class="theme-label">
-                            <input type="radio" name="theme" value="dark" onclick="setDarkTheme()"> Dark Theme
-                        </label>
-                    </form>
-
-                    <form id="board-form">
-                        <p>Customize your board:</p>
-                        <label id="standard-board-label" class="board-label selected">
-                            <input type="radio" name="board" value="standard" onclick="setStandardBoard()"> Standard Board
-                        </label>
-                        <label id="purple-board-label" class="board-label">
-                            <input type="radio" name="board" value="purple" onclick="setPurpleBoard()"> purple Board
-                        </label>
-                        <label id="blue-board-label" class="board-label">
-                            <input type="radio" name="board" value="blue" onclick="setBlueBoard()"> Blue Board
-                        </label>
-                        <label id="orange-board-label" class="board-label">
-                            <input type="radio" name="board" value="orange" onclick="setOrangeBoard()"> orange Board
-                        </label>
-                        <label id="pink-board-label" class="board-label">
-                            <input type="radio" name="board" value="pink" onclick="setPinkBoard()"> Pink Board
-                        </label>
-                    </form>
+    <main class="layout">
+        <section class="cabinet">
+            <div class="hud">
+                <div class="hud-item">
+                    <span>Mines</span>
+                    <strong id="mines-count">10</strong>
                 </div>
-                <a id="logoutButton" onclick="logoutButton()">logout</a>
+                <div class="hud-item hud-timer">
+                    <span>Time</span>
+                    <strong id="timer">0:00.00</strong>
+                </div>
+                <div class="hud-item">
+                    <span>Flags</span>
+                    <strong id="flag-counter">10</strong>
+                </div>
             </div>
-            <div id="loggedOutContent"><a href="login.html" >login</a></div>
-            
-            
-        </div>
-        
 
-        <div id="btnContainer">
-            <button class="openbtn" onclick="openNav()">☰</button>
-        </div>
-        
+            <div id="board" role="grid" aria-label="Minesweeper board"></div>
 
-        <!--mine sweeper game-->
-        <div id="main">
-            <h1>Mine-Sweeper</h1>
-            <div id="game-info">
-                <h2 id="flag-counter">Flags: 10</h2>
-                <h2 id="timer"></h2>
-                <h2>Mines: <span id="mines-count">0</span></h2>
+            <div class="controls">
+                <p class="hint">Left click digs · Right click flags · Hold to flag on mobile</p>
+                <button type="button" id="new-game">New Game</button>
             </div>
-            <div id="board"></div> 
-            <br>
-            <button id="flag-button">🚩</button>
+        </section>
+
+        <aside class="scores-panel">
+            <div class="scores-header">
+                <h2>High Scores</h2>
+                <p>Fastest clears</p>
+            </div>
+            <ol id="leaderboard" class="leaderboard"></ol>
+        </aside>
+    </main>
+
+    <div id="name-modal" class="modal" hidden>
+        <div class="modal-card">
+            <p class="modal-kicker">Insert coin</p>
+            <h2>Enter your name</h2>
+            <p class="modal-copy">Three letters. Arcade rules.</p>
+            <div class="initials" id="initials">
+                <input id="letter-0" maxlength="1" autocomplete="off" aria-label="First letter">
+                <input id="letter-1" maxlength="1" autocomplete="off" aria-label="Second letter">
+                <input id="letter-2" maxlength="1" autocomplete="off" aria-label="Third letter">
+            </div>
+            <button type="button" class="primary" id="save-name">Let's play</button>
         </div>
-        
-        
-    </body>
+    </div>
+
+    <div id="result-modal" class="modal" hidden>
+        <div class="modal-card">
+            <p class="modal-kicker" id="result-kicker">Game over</p>
+            <h2 id="result-title">Boom</h2>
+            <p class="modal-copy" id="result-copy"></p>
+            <button type="button" class="primary" id="play-again">Play again</button>
+        </div>
+    </div>
+
+    <script src="js/mine.js"></script>
+</body>
 </html>

@@ -1,48 +1,35 @@
 const Game = require('../models/game');
 
-const saveGameData = async (req, res) => {
-    const { totalTime, minesLeft, userFirstName } = req.body;
+const INITIALS_PATTERN = /^[A-Z0-9]{3}$/;
 
-    // Log the received game data to ensure the request is working
-    console.log('GAMECONTROLLER Received game data:', { totalTime, minesLeft, userFirstName });
+const saveScore = async (req, res) => {
+  const initials = String(req.body.initials || '').trim().toUpperCase();
+  const timeMs = Number(req.body.timeMs);
 
-    // Get the current date and format it to "MM/DD/YYYY"
-    const date = new Date();
-    const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+  if (!INITIALS_PATTERN.test(initials) || !Number.isFinite(timeMs) || timeMs < 0) {
+    return res.status(400).json({ message: 'Invalid score' });
+  }
 
-    try {
-        // Create a new game instance
-        const newGame = new Game({ 
-            totalTime, 
-            minesLeft, 
-            userFirstName, 
-            date: formattedDate 
-        });
-        
-        console.log('GAMECONTROLLER Preparing to save the game with data:', newGame);
-        // Save the new game document
-        const savedGame = await newGame.save();
-        
-        // Log the saved game document for confirmation
-        console.log('GAMECONTROLLER Game data saved successfully:', savedGame);
-
-        // Respond with success
-        res.status(201).json({ message: 'Game data saved', game: savedGame });
-    } catch (error) {
-        console.error('Error saving game data:', error); // Log error details
-        res.status(400).json({ message: 'Error saving game data', error });
-    }
+  try {
+    const score = await Game.create({ initials, timeMs, won: true });
+    return res.status(201).json(score);
+  } catch (error) {
+    console.error('Error saving score:', error);
+    return res.status(500).json({ message: 'Error saving score' });
+  }
 };
 
-// Controller to fetch all games
-const getAllGames = async (req, res) => {
-    try {
-        const games = await Game.find({}); // Fetch all games
-        res.json(games); // Send all games as JSON
-    } catch (error) {
-        console.error('Error fetching all games:', error);
-        res.status(500).json({ message: 'Error fetching all game data' });
-    }
+const getScores = async (req, res) => {
+  try {
+    const scores = await Game.find({ won: true, timeMs: { $exists: true } })
+      .sort({ timeMs: 1 })
+      .limit(10)
+      .lean();
+    return res.json(scores);
+  } catch (error) {
+    console.error('Error fetching scores:', error);
+    return res.status(500).json({ message: 'Error fetching scores' });
+  }
 };
 
-module.exports = { saveGameData, getAllGames };
+module.exports = { saveScore, getScores };

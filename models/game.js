@@ -1,34 +1,25 @@
 const mongoose = require('mongoose');
 
 const gameSchema = new mongoose.Schema({
-    totalTime: {
-        type: String,
-        required: true,
-    },
-    minesLeft: {
-        type: Number,
-        required: true,
-    },
-    userFirstName: {
-        type: String,
-        required: true,
-    },
-    date: {
-        type: String, // Store as a string in "MM/DD/YYYY" format
-        required: true,
-    },
-}, { 
-    timestamps: true,
-    collection: 'games'
+  initials: {
+    type: String,
+    required: true,
+    uppercase: true,
+    minlength: 3,
+    maxlength: 3,
+  },
+  timeMs: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  won: {
+    type: Boolean,
+    default: true,
+  },
+}, {
+  timestamps: true,
+  collection: 'games',
 });
 
-// Create the model
-const Game = mongoose.model('Game', gameSchema, 'games');
-
-// Logging the export process
-console.log('GAME Exporting Game model to MongoDB...');
-
-// Export the model
-module.exports = Game;
-
-console.log('GAME Game model exported successfully.');
+module.exports = mongoose.model('Game', gameSchema, 'games');

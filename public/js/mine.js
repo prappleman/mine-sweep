@@ -1,315 +1,415 @@
-var board = [];
-var rows = 10;
-var columns = 10;
+const ROWS = 10;
+const COLS = 10;
+const MINE_COUNT = 10;
+const NAME_KEY = "arcadeName";
+const LOCAL_SCORES_KEY = "highScores";
 
-var timer = 0;
-var timerInterval = null;
-var firstClick = false;
+const boardEl = document.getElementById("board");
+const timerEl = document.getElementById("timer");
+const minesEl = document.getElementById("mines-count");
+const flagsEl = document.getElementById("flag-counter");
+const pilotNameEl = document.getElementById("pilot-name");
+const leaderboardEl = document.getElementById("leaderboard");
+const nameModal = document.getElementById("name-modal");
+const resultModal = document.getElementById("result-modal");
+const letterInputs = [0, 1, 2].map((i) => document.getElementById(`letter-${i}`));
 
-var minesCount = 10;
-var minesLocation = [];
+let tiles = [];
+let mines = new Set();
+let gameOver = false;
+let won = false;
+let started = false;
+let startTime = 0;
+let timerId = null;
+let flagsUsed = 0;
+let tilesClicked = 0;
+let suppressClick = false;
 
-var tilesClicked = 0;
-var flagEnabled = false;
-var flagsUsed = 0;
-var bombClicked = false;
-
-var gameOver = false;
-
-window.onload = function(){
-    startGame();
-    updateButton();
+function formatTime(ms) {
+    const total = Math.max(0, Math.floor(ms));
+    const minutes = Math.floor(total / 60000);
+    const seconds = Math.floor((total % 60000) / 1000);
+    const hundredths = Math.floor((total % 1000) / 10);
+    return `${minutes}:${String(seconds).padStart(2, "0")}.${String(hundredths).padStart(2, "0")}`;
 }
 
-function setMines() {
-    let minesLeft = minesCount;
-    while (minesLeft > 0) {
-        let r = Math.floor(Math.random() * rows);
-        let c = Math.floor(Math.random() * columns);
-        let id = r.toString() + '-' + c.toString();
-
-        if (!minesLocation.includes(id)) {
-            minesLocation.push(id);
-            minesLeft -= 1;
-        }
-    }
+function getInitials() {
+    return (localStorage.getItem(NAME_KEY) || "").toUpperCase();
 }
 
-function startGame() {
-    // Reset variables
-    board = [];
-    tilesClicked = 0;
-    gameOver = false;
-    flagEnabled = false;
-    minesLocation = [];
-    flagsUsed = 0;
-    bombClicked = false;
-    minesCount = 10;
-    firstClick = false;  // Reset firstClick for a new game
-    timer = 0;  // Reset timer
-    clearInterval(timerInterval);  // Clear any previous timer interval
-    document.getElementById('timer').innerText = `0:00:00`;  // Reset timer display
-    document.getElementById('mines-count').innerText = minesCount; // Reset mine count display
-    document.getElementById('board').innerHTML = "";  // Clear the previous game board
-
-    setMines(); // Reset mines
-    for (let r = 0; r < rows; r++) {
-        let row = [];
-        for (let c = 0; c < columns; c++) {
-            let tile = document.createElement('div');
-            tile.id = r.toString() + '-' + c.toString();
-            tile.addEventListener('click', clickTile);
-            document.getElementById('board').append(tile);
-            row.push(tile);
-        }
-        board.push(row);
-    }
+function setInitials(value) {
+    const initials = value.toUpperCase();
+    localStorage.setItem(NAME_KEY, initials);
+    pilotNameEl.textContent = initials;
 }
 
-function setFlag() {
-    if (flagEnabled) {
-        flagEnabled = false;
-        document.getElementById('flag-button').style.border = 'solid var(--base-color)';
-        document.getElementById('flag-button').style.backgroundColor = 'var(--tile-color-2)';
-    } else {
-        flagEnabled = true;
-        document.getElementById('flag-button').style.border = 'solid var(--secondary-color)';
-        document.getElementById('flag-button').style.backgroundColor = 'var(--primary-color)';
-    }
-    console.log('Flag state: ', flagEnabled);
+function showModal(modal) {
+    modal.hidden = false;
 }
 
-function clickTile() {
-    let tile = this;
-
-    // Check if the game is over, the tile is already clicked, or if it has a flag
-    if (gameOver || tile.classList.contains('tile-clicked')) {
-        return;
-    }
-
-    if (!firstClick) {
-        startTimer();
-        firstClick = true;  // Set this so the timer only starts once
-    }
-
-    if (flagEnabled) {
-        // Place or remove a flag
-        if (tile.innerText === '') {
-            if (flagsUsed < minesCount) {  // Check if the number of flags is within the limit
-                console.log('tile clicked')
-                tile.innerText = '🚩';  // Place a flag
-                flagsUsed += 1;  // Increase the flag count
-                updateFlagCounter();  // Update the flag counter display
-            }
-        } else if (tile.innerText === '🚩') {
-            console.log('tile clicked')
-            tile.innerText = '';  // Remove the flag
-            flagsUsed -= 1;  // Decrease the flag count
-            updateFlagCounter();  // Update the flag counter display
-        }
-        return;
-    }
-
-    if (tile.innerText != '🚩'){
-        // Handle tile click for game logic
-        if (minesLocation.includes(tile.id)) {
-            bombClicked = true;
-            endGame();  // Call endGame if a mine is clicked
-            return;
-        } 
-    }
-    
-    // Process tile click for non-mine tiles
-    let coords = tile.id.split('-');
-    let r = parseInt(coords[0]);
-    let c = parseInt(coords[1]);
-    checkMine(r, c);
+function hideModal(modal) {
+    modal.hidden = true;
 }
 
-function revealMines() {
-
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < columns; c++) {
-            let tile = board[r][c];
-            if (minesLocation.includes(tile.id)) {
-                if (bombClicked){
-                    if (tile.innerText != '🚩'){
-                        tile.innerText = '💣';  // Show bomb icon
-                        tile.style.backgroundColor = 'var(--lose-color)';  // Set background to red 
-                    } else {
-                        tile.style.backgroundColor = 'var(--win-color)';  // Set background to green
-                        minesCount -= 1;
-                    }
-                } else {
-                    tile.style.backgroundColor = 'var(--win-color)';  // Set background to green
-                    minesCount -= 1;
-                }
-            }
-        }
-    }
+function updateFlagCount() {
+    flagsEl.textContent = String(MINE_COUNT - flagsUsed);
 }
 
-function checkMine(r, c) {
-    if (r < 0 || r >= rows || c < 0 || c >= columns) {
-        return;
-    }
-    if (board[r][c].classList.contains('tile-clicked') || board[r][c].innerText === '🚩') {
-        return;  // Skip if tile is already clicked or flagged
-    }
-
-    board[r][c].classList.add('tile-clicked');
-    tilesClicked += 1;
-
-    let minesFound = 0;
-
-    minesFound += checkTile(r - 1, c - 1);
-    minesFound += checkTile(r - 1, c);
-    minesFound += checkTile(r - 1, c + 1);
-
-    minesFound += checkTile(r, c - 1);
-    minesFound += checkTile(r, c + 1);
-
-    minesFound += checkTile(r + 1, c - 1);
-    minesFound += checkTile(r + 1, c);
-    minesFound += checkTile(r + 1, c + 1);
-
-    if (minesFound > 0) {
-        board[r][c].innerText = minesFound;
-        board[r][c].classList.add('x' + minesFound.toString());
-    }
-    else {
-        checkMine(r - 1, c - 1);
-        checkMine(r - 1, c);
-        checkMine(r - 1, c + 1);
-
-        checkMine(r, c - 1);
-        checkMine(r, c + 1);
-
-        checkMine(r + 1, c - 1);
-        checkMine(r + 1, c);
-        checkMine(r + 1, c + 1);
-    }
-
-    if (tilesClicked == rows * columns - minesCount){
-        endGame();
-    }
-}
-
-function checkTile(r, c) {
-    if (r < 0 || r >= rows || c < 0 || c >= columns) {
-        return 0;
-    }
-    if (minesLocation.includes(r.toString() + '-' + c.toString())) {
-        return 1;
-    }
-    return 0;
-}
-
-function updateButton() {
-    if (gameOver) {
-        console.log('game is over')
-        document.getElementById('flag-button').textContent = 'Retry';  // Change text to 'Retry'
-        document.getElementById('flag-button').onclick = onRetryClick;  // Set retry functionality
-    }else {
-        document.getElementById('flag-button').textContent = '🚩';  // Change text back to '🚩'
-        document.getElementById('flag-button').onclick = setFlag;  // Set flag functionality
-    }
-}
-
-function onRetryClick() {
-    gameOver = false; // Reset gameOver status
-    flagEnabled = false; // Reset flag state
-    tilesClicked = 0;  // Reset clicked tiles count
-    document.getElementById('mines-count').innerText = minesCount; // Reset mines count display
-
-    startGame();  // Restart the game by calling startGame
-    updateButton();  // Update button back to flag functionality
-    console.log('Retry clicked');
-}
-
-function endGame() {
-    gameOver = true;
-    revealMines();  
-    updateButton();  
-    clearInterval(timerInterval);  
-    document.getElementById('mines-count').innerText = minesCount; // Reset mine count display
-
-    // Get the end time
-    const endTime = Date.now();
-    const totalElapsedTime = endTime - startTime; 
-
-    let minutes = Math.floor(totalElapsedTime / 60000); 
-    let seconds = Math.floor((totalElapsedTime % 60000) / 1000); 
-    let milliseconds = Math.floor((totalElapsedTime % 1000) / 10); 
-
-    if (seconds < 10) {
-        seconds = '0' + seconds;
-    }
-    if (milliseconds < 10) {
-        milliseconds = '0' + milliseconds;
-    }
-
-    const user = JSON.parse(localStorage.getItem('user'));
-    const userFirstName = user ? user.firstname : '';
-
-    const gameData = {
-        totalTime: `${minutes}:${seconds}:${milliseconds}`,
-        minesLeft: minesCount,
-        userFirstName: userFirstName, // Correctly accessing userFirstName
-    };
-
-    console.log('MINE Sending game data to server:', gameData ); // Log the data being sent
-
-    fetch('/game/games', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(gameData),
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('MINE Game data saved successfully!'); // Log success
-        } else {
-            console.error('Error saving game data:', response.statusText); // Log the error message
-        }
-    })
-    .catch(error => {
-        console.error('Error during fetch:', error); // Log any fetch errors
-    });
-}
-
-
-
-function updateFlagCounter() {
-    document.getElementById('flag-counter').innerText = `Flags: ${minesCount - flagsUsed}`;
+function stopTimer() {
+    clearInterval(timerId);
+    timerId = null;
 }
 
 function startTimer() {
-    startTime = Date.now();  // Store the start time
-    timerInterval = setInterval(function() {
-        // Calculate the elapsed time
-        let elapsedTime = Date.now() - startTime;
-
-        // Convert elapsed time to total seconds
-        let totalSeconds = Math.floor(elapsedTime / 1000); // Total seconds
-        let minutes = Math.floor(totalSeconds / 60); // Calculate minutes
-        let seconds = totalSeconds % 60; // Calculate seconds
-        let milliseconds = Math.floor((elapsedTime % 1000) / 10); // Get milliseconds (two digits)
-
-        // Format seconds and milliseconds to always be two digits
-        if (seconds < 10) {
-            seconds = '0' + seconds;
-        }
-        if (milliseconds < 10) {
-            milliseconds = '0' + milliseconds;
-        }
-
-        // Update the timer display
-        document.getElementById('timer').innerText = `${minutes}:${seconds}:${milliseconds}`;
-    }, 10);  // Update every 10 milliseconds
-
-    // Optionally, if you want to provide a way to stop the timer:
-    return timerInterval; // Return the interval ID if needed for stopping the timer later
+    startTime = Date.now();
+    stopTimer();
+    timerId = setInterval(() => {
+        timerEl.textContent = formatTime(Date.now() - startTime);
+    }, 10);
 }
+
+function tileId(r, c) {
+    return `${r}-${c}`;
+}
+
+function parseId(id) {
+    const [r, c] = id.split("-").map(Number);
+    return { r, c };
+}
+
+function neighbors(r, c) {
+    const cells = [];
+    for (let dr = -1; dr <= 1; dr += 1) {
+        for (let dc = -1; dc <= 1; dc += 1) {
+            if (dr === 0 && dc === 0) continue;
+            const nr = r + dr;
+            const nc = c + dc;
+            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+                cells.push([nr, nc]);
+            }
+        }
+    }
+    return cells;
+}
+
+function placeMines(safeR, safeC) {
+    mines = new Set();
+    const forbidden = new Set([tileId(safeR, safeC)]);
+    neighbors(safeR, safeC).forEach(([r, c]) => forbidden.add(tileId(r, c)));
+
+    while (mines.size < MINE_COUNT) {
+        const r = Math.floor(Math.random() * ROWS);
+        const c = Math.floor(Math.random() * COLS);
+        const id = tileId(r, c);
+        if (!forbidden.has(id)) {
+            mines.add(id);
+        }
+    }
+}
+
+function adjacentMineCount(r, c) {
+    return neighbors(r, c).reduce((sum, [nr, nc]) => sum + (mines.has(tileId(nr, nc)) ? 1 : 0), 0);
+}
+
+function startGame() {
+    tiles = [];
+    mines = new Set();
+    gameOver = false;
+    won = false;
+    started = false;
+    flagsUsed = 0;
+    tilesClicked = 0;
+    suppressClick = false;
+    stopTimer();
+    timerEl.textContent = "0:00.00";
+    minesEl.textContent = String(MINE_COUNT);
+    updateFlagCount();
+    hideModal(resultModal);
+    boardEl.innerHTML = "";
+
+    for (let r = 0; r < ROWS; r += 1) {
+        const row = [];
+        for (let c = 0; c < COLS; c += 1) {
+            const tile = document.createElement("button");
+            tile.type = "button";
+            tile.className = "tile";
+            tile.id = tileId(r, c);
+            tile.setAttribute("aria-label", `Tile ${r + 1}, ${c + 1}`);
+            bindTileEvents(tile);
+            boardEl.append(tile);
+            row.push(tile);
+        }
+        tiles.push(row);
+    }
+}
+
+function bindTileEvents(tile) {
+    let pressTimer = null;
+    let longPress = false;
+
+    tile.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (suppressClick || longPress) {
+            suppressClick = false;
+            longPress = false;
+            return;
+        }
+        clickTile(tile);
+    });
+
+    tile.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+        toggleFlag(tile);
+    });
+
+    tile.addEventListener("pointerdown", (event) => {
+        if (event.pointerType !== "touch") return;
+        longPress = false;
+        pressTimer = window.setTimeout(() => {
+            longPress = true;
+            suppressClick = true;
+            toggleFlag(tile);
+        }, 420);
+    });
+
+    const cancelPress = () => clearTimeout(pressTimer);
+    tile.addEventListener("pointerup", cancelPress);
+    tile.addEventListener("pointerleave", cancelPress);
+    tile.addEventListener("pointercancel", cancelPress);
+}
+
+function toggleFlag(tile) {
+    if (gameOver || tile.classList.contains("revealed")) return;
+
+    if (tile.classList.contains("flagged")) {
+        tile.classList.remove("flagged");
+        flagsUsed -= 1;
+    } else if (flagsUsed < MINE_COUNT) {
+        tile.classList.add("flagged");
+        flagsUsed += 1;
+    }
+
+    updateFlagCount();
+}
+
+function clickTile(tile) {
+    if (gameOver || tile.classList.contains("revealed") || tile.classList.contains("flagged")) {
+        return;
+    }
+
+    const { r, c } = parseId(tile.id);
+
+    if (!started) {
+        placeMines(r, c);
+        startTimer();
+        started = true;
+    }
+
+    if (mines.has(tile.id)) {
+        finishGame(false);
+        return;
+    }
+
+    reveal(r, c);
+    if (tilesClicked === ROWS * COLS - MINE_COUNT) {
+        finishGame(true);
+    }
+}
+
+function reveal(r, c) {
+    if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
+
+    const tile = tiles[r][c];
+    if (tile.classList.contains("revealed") || tile.classList.contains("flagged")) return;
+
+    tile.classList.add("revealed");
+    tilesClicked += 1;
+
+    const count = adjacentMineCount(r, c);
+    if (count > 0) {
+        tile.textContent = String(count);
+        tile.classList.add(`x${count}`);
+        return;
+    }
+
+    neighbors(r, c).forEach(([nr, nc]) => reveal(nr, nc));
+}
+
+function finishGame(isWin) {
+    gameOver = true;
+    won = isWin;
+    stopTimer();
+    const elapsed = started ? Date.now() - startTime : 0;
+    timerEl.textContent = formatTime(elapsed);
+
+    tiles.flat().forEach((tile) => {
+        const isMine = mines.has(tile.id);
+        const isFlagged = tile.classList.contains("flagged");
+
+        if (isMine && !isFlagged) {
+            tile.classList.add(isWin ? "mine-safe" : "mine");
+            tile.textContent = isWin ? "" : "💣";
+        } else if (isFlagged && !isMine) {
+            tile.classList.remove("flagged");
+            tile.classList.add("wrong");
+        }
+    });
+
+    const resultKicker = document.getElementById("result-kicker");
+    const resultTitle = document.getElementById("result-title");
+    const resultCopy = document.getElementById("result-copy");
+
+    if (isWin) {
+        resultKicker.textContent = "Cleared";
+        resultTitle.textContent = "You win";
+        resultCopy.textContent = `Time ${formatTime(elapsed)} · Saved to the board as ${getInitials()}`;
+        submitScore(elapsed);
+    } else {
+        resultKicker.textContent = "Mine hit";
+        resultTitle.textContent = "Boom";
+        resultCopy.textContent = "Right click flags. Left click digs. Try a cleaner run.";
+    }
+
+    showModal(resultModal);
+}
+
+function getLocalScores() {
+    try {
+        return JSON.parse(localStorage.getItem(LOCAL_SCORES_KEY) || "[]");
+    } catch (error) {
+        return [];
+    }
+}
+
+function saveLocalScore(entry) {
+    const scores = [...getLocalScores(), entry]
+        .sort((a, b) => a.timeMs - b.timeMs)
+        .slice(0, 10);
+    localStorage.setItem(LOCAL_SCORES_KEY, JSON.stringify(scores));
+    return scores;
+}
+
+async function submitScore(timeMs) {
+    const initials = getInitials() || "AAA";
+    const entry = { initials, timeMs, won: true };
+
+    saveLocalScore(entry);
+    renderLeaderboard(getLocalScores());
+
+    try {
+        const response = await fetch("/game/scores", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(entry),
+        });
+        if (response.ok) {
+            await loadLeaderboard();
+        }
+    } catch (error) {
+        console.error("Could not save score to server:", error);
+    }
+}
+
+function renderLeaderboard(scores) {
+    if (!scores.length) {
+        leaderboardEl.innerHTML = '<li class="empty-scores">No clears yet. Be the first.</li>';
+        return;
+    }
+
+    leaderboardEl.innerHTML = scores
+        .slice(0, 10)
+        .map((score, index) => `
+            <li>
+                <span class="rank">${String(index + 1).padStart(2, "0")}</span>
+                <span class="player">${score.initials}</span>
+                <span class="time">${formatTime(score.timeMs)}</span>
+            </li>
+        `)
+        .join("");
+}
+
+async function loadLeaderboard() {
+    try {
+        const response = await fetch("/game/scores");
+        if (!response.ok) throw new Error("Leaderboard unavailable");
+        const scores = await response.json();
+        if (scores.length) {
+            renderLeaderboard(scores);
+            return;
+        }
+    } catch (error) {
+        console.error(error);
+    }
+    renderLeaderboard(getLocalScores());
+}
+
+function currentTypedName() {
+    return letterInputs.map((input) => (input.value || "").toUpperCase()).join("");
+}
+
+function fillNameInputs(name) {
+    const padded = (name || "").toUpperCase().padEnd(3, "").slice(0, 3);
+    letterInputs.forEach((input, index) => {
+        input.value = padded[index] || "";
+    });
+}
+
+function setupNameEntry() {
+    letterInputs.forEach((input, index) => {
+        input.addEventListener("input", () => {
+            const next = input.value.replace(/[^a-zA-Z0-9]/g, "").slice(-1).toUpperCase();
+            input.value = next;
+            if (next && index < 2) {
+                letterInputs[index + 1].focus();
+            }
+        });
+
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Backspace" && !input.value && index > 0) {
+                letterInputs[index - 1].focus();
+            }
+            if (event.key === "Enter") {
+                saveName();
+            }
+        });
+    });
+}
+
+function openNameModal() {
+    fillNameInputs(getInitials());
+    showModal(nameModal);
+    letterInputs[0].focus();
+}
+
+function saveName() {
+    const name = currentTypedName();
+    if (!/^[A-Z0-9]{3}$/.test(name)) {
+        letterInputs[0].focus();
+        return;
+    }
+    setInitials(name);
+    hideModal(nameModal);
+}
+
+function init() {
+    setupNameEntry();
+    minesEl.textContent = String(MINE_COUNT);
+    const initials = getInitials();
+    if (/^[A-Z0-9]{3}$/.test(initials)) {
+        setInitials(initials);
+        hideModal(nameModal);
+    } else {
+        openNameModal();
+    }
+
+    boardEl.addEventListener("contextmenu", (event) => event.preventDefault());
+    startGame();
+    loadLeaderboard();
+
+    document.getElementById("save-name").addEventListener("click", saveName);
+    document.getElementById("pilot-btn").addEventListener("click", openNameModal);
+    document.getElementById("new-game").addEventListener("click", startGame);
+    document.getElementById("play-again").addEventListener("click", startGame);
+}
+
+init();
