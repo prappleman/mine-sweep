@@ -24,6 +24,7 @@ let timerId = null;
 let flagsUsed = 0;
 let tilesClicked = 0;
 let suppressClick = false;
+let pendingWinTime = null;
 
 function formatTime(ms) {
     const total = Math.max(0, Math.floor(ms));
@@ -37,10 +38,18 @@ function getInitials() {
     return (localStorage.getItem(NAME_KEY) || "").toUpperCase();
 }
 
+function hasInitials() {
+    return /^[A-Z0-9]{3}$/.test(getInitials());
+}
+
 function setInitials(value) {
     const initials = value.toUpperCase();
     localStorage.setItem(NAME_KEY, initials);
     pilotNameEl.textContent = initials;
+}
+
+function showPilotName() {
+    pilotNameEl.textContent = hasInitials() ? getInitials() : "---";
 }
 
 function showModal(modal) {
@@ -255,21 +264,28 @@ function finishGame(isWin) {
         }
     });
 
-    const resultKicker = document.getElementById("result-kicker");
-    const resultTitle = document.getElementById("result-title");
-    const resultCopy = document.getElementById("result-copy");
-
     if (isWin) {
-        resultKicker.textContent = "Cleared";
-        resultTitle.textContent = "You win";
-        resultCopy.textContent = `Time ${formatTime(elapsed)} · Saved to the board as ${getInitials()}`;
-        submitScore(elapsed);
-    } else {
-        resultKicker.textContent = "Mine hit";
-        resultTitle.textContent = "Boom";
-        resultCopy.textContent = "Right click flags. Left click digs. Try a cleaner run.";
+        pendingWinTime = elapsed;
+        if (!hasInitials()) {
+            openNameModal();
+            return;
+        }
+        showWinResult(elapsed);
+        return;
     }
 
+    pendingWinTime = null;
+    document.getElementById("result-kicker").textContent = "Mine hit";
+    document.getElementById("result-title").textContent = "Boom";
+    document.getElementById("result-copy").textContent = "Right click flags. Left click digs. Try a cleaner run.";
+    showModal(resultModal);
+}
+
+function showWinResult(elapsed) {
+    document.getElementById("result-kicker").textContent = "Cleared";
+    document.getElementById("result-title").textContent = "You win";
+    document.getElementById("result-copy").textContent = `Time ${formatTime(elapsed)} · Saved to the board as ${getInitials()}`;
+    submitScore(elapsed);
     showModal(resultModal);
 }
 
@@ -290,7 +306,9 @@ function saveLocalScore(entry) {
 }
 
 async function submitScore(timeMs) {
-    const initials = getInitials() || "AAA";
+    const initials = getInitials();
+    if (!hasInitials()) return;
+
     const entry = { initials, timeMs, won: true };
 
     saveLocalScore(entry);
@@ -389,25 +407,29 @@ function saveName() {
     }
     setInitials(name);
     hideModal(nameModal);
+    if (pendingWinTime != null) {
+        const elapsed = pendingWinTime;
+        pendingWinTime = null;
+        showWinResult(elapsed);
+    }
 }
 
 function init() {
     setupNameEntry();
     minesEl.textContent = String(MINE_COUNT);
-    const initials = getInitials();
-    if (/^[A-Z0-9]{3}$/.test(initials)) {
-        setInitials(initials);
-        hideModal(nameModal);
-    } else {
-        openNameModal();
-    }
+    showPilotName();
+    hideModal(nameModal);
 
     boardEl.addEventListener("contextmenu", (event) => event.preventDefault());
     startGame();
     loadLeaderboard();
 
     document.getElementById("save-name").addEventListener("click", saveName);
-    document.getElementById("pilot-btn").addEventListener("click", openNameModal);
+    document.getElementById("pilot-btn").addEventListener("click", () => {
+        if (hasInitials()) {
+            openNameModal();
+        }
+    });
     document.getElementById("new-game").addEventListener("click", startGame);
     document.getElementById("play-again").addEventListener("click", startGame);
 }
