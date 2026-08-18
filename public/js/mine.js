@@ -260,7 +260,7 @@ function endGame() {
 
     console.log('MINE Sending game data to server:', gameData ); // Log the data being sent
 
-    fetch('https://mine-sweep.onrender.com/game/games', {
+    fetch('/game/games', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

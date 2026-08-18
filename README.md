@@ -22,12 +22,12 @@ Welcome to my **Minesweeper Game**! This is a modern take on the classic game wh
 ## Getting Started
 
 1. **Play the Game**:
-   - Visit the hosted site on Render: [Minesweeper Game on Render](https://mine-sweep.onrender.com)
+   - Visit the hosted site on Vercel: [Minesweeper Game on Vercel](https://mine-sweep-three.vercel.app)
 
 2. **Clone the Repository (For Local Setup)**:
     ```bash
-    git clone https://github.com/your-username/minesweeper-game.git
-    cd minesweeper-game
+    git clone https://github.com/prappleman/art-shop.git
+    cd art-shop
     ```
 
 3. **Install Dependencies**:
@@ -40,6 +40,7 @@ Welcome to my **Minesweeper Game**! This is a modern take on the classic game wh
    - Set up your MongoDB connection URL in a `.env` file:
      ```
      MONGODB_URI=your-mongo-db-uri
+     JWT_SECRET=your-jwt-secret
      ```
 
 5. **Run the Game Locally**:
@@ -48,7 +49,7 @@ Welcome to my **Minesweeper Game**! This is a modern take on the classic game wh
     ```
 
 6. **Access the Game**:
-   - Open your browser and navigate to `http://localhost:3000`.
+   - Open your browser and navigate to `http://localhost:3001`.
 
 ## How to Play
 
@@ -87,6 +88,6 @@ Challenge your friends to see who can get the best score!
 - **MongoDB**: For storing user accounts, game records, and leaderboard data.
 - **Node.js & Express**: Server-side handling of user authentication, data storage, and game logic.
 - **HTML, CSS, JavaScript**: Front-end interface and traditional Minesweeper functionality.
-- **Render**: Free hosting platform for deploying the site online.
+- **Vercel**: Hosting platform for deploying the site online.
 
 Enjoy the challenge, and happy mine hunting!
